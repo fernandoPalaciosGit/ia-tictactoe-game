@@ -12,3 +12,12 @@
 - Boton Dinamico de Twitter
 
 - Maquillaje del Juego
+
+### Deploy juego
+- :fork_and_knife: Forkeame en Github :smile:
+- clone or download repository
+- console deploy
+```bash
+$bower install
+$grunt default
+```
