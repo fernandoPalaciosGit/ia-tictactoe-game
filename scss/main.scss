@@ -1,0 +1,11 @@
+.ia-wrapper-matrix {
+    border: 1px solid #1E90FF;
+
+    &--looser-game {
+      border: 1px solid #8B0000;
+    }
+
+    &--winner-game {
+        border: 1px solid #32CD32;
+    }
+}

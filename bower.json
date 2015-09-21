@@ -1,0 +1,26 @@
+{
+  "name": "ia-tictactoe-game",
+  "version": "0.0.0",
+  "homepage": "https://github.com/fernandoPalaciosGit/ia-tictactoe-game",
+  "authors": [
+    "fernandoPalaciosGit <fernandopalacioslandi@gmail.com>"
+  ],
+  "description": "inteligencia artifical en un juego de tres en ralla",
+  "main": "index.html",
+  "keywords": [
+    "ia",
+    "inteligencia artificial",
+    "tres en ralla"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "modernizer": "~2.8.2",
+    "normalize-css": "normalize.css#~3.0.3"
+  }
+}
