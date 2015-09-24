@@ -55,8 +55,6 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     @include vertical-align(relative);
 
     /*CELLS STRUCTURE*/
-    &__row-box { }
-
     &__cell-box {
         cursor: pointer;
         display: inline-block;
