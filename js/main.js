@@ -1,21 +1,13 @@
-;(function () {
+;(function (w, d, Matrix) {
     'use strict';
 
-    var matrix = {
-        grid: [],
-        class: 'js-matrix-',
-        columns: 3,
-        rows: 3
+    var IAGame = {
+        matrix: new Matrix(3, 3, 'js-matrix-'),
+        init: function () {
+            this.matrix.clearGrid();
+            console.dir(this.matrix.grid);
+        }
     };
 
-    // coordenates : js-matrix-{column}-{row}
-    for (var i = 0; i < matrix.rows; i++) {
-        matrix.grid.push(new Array(matrix.columns));
-
-        for (var j = 0; j < matrix.columns; j++) {
-            matrix.grid[i][j] = matrix.class + j + i;
-        }
-    }
-
-    console.dir(matrix.grid);
-}(window, document));
+    d.addEventListener('DOMContentLoaded', IAGame.init.bind(IAGame));
+}(window, document, window.Matrix));
