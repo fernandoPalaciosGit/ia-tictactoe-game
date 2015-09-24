@@ -1,11 +1,89 @@
-.ia-wrapper-matrix {
-    border: 1px solid #1E90FF;
+%blur-pixel {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
 
-    &--looser-game {
-      border: 1px solid #8B0000;
+%hover-cell-empty {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    opacity: 0.8;
+}
+
+%transition-smooth {
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0) scale(1.0, 1.0);
+    transition: all 0.2s ease-in 0s;
+    -webkit-transition: all 0.2s ease-in 0s;
+    -moz-transition: all 0.2s ease-in 0s;
+}
+
+@mixin vertical-align($position: relative) {
+    position: $position;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+@mixin background-game-image($url: '') {
+    background-image: url($url);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-size: contain;
+}
+
+$matrix-box-square-size: 100px;
+$matrix-box-background: #8C9EFF;
+$matrix-box-background-fill: #536DFE;
+$matrix-box-separation: 10px;
+$wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 3) + 150px;
+
+.mdl-mini-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.ia-wrapper-matrix {
+    @extend %blur-pixel;
+    height: $wrapper-matrix-size;
+}
+
+.ia-matrix-game {
+    margin: 0 auto;
+    text-align: center;
+    @include vertical-align(relative);
+
+    /*CELLS STRUCTURE*/
+    &__row-box { }
+
+    &__cell-box {
+        cursor: pointer;
+        display: inline-block;
+        background-color: $matrix-box-background;
+        width: $matrix-box-square-size;
+        height: $matrix-box-square-size;
+        margin: $matrix-box-separation;
+        border-radius: 5px;
+        @extend %transition-smooth;
     }
 
-    &--winner-game {
-        border: 1px solid #32CD32;
+    /*CELLS BEHAVIOUR*/
+    &__cell-box:active,
+    &__cell--fill {
+        background-color: $matrix-box-background-fill;
+        cursor: not-allowed;
+    }
+
+    &__cell--cross {
+        @include background-game-image('./../images/cross.png');
+    }
+
+    &__cell--circle {
+        @include background-game-image('./../images/circle.png');
+    }
+
+    &__cell-box:not(.ia-matrix-game__cell--fill ):hover {
+        @extend %hover-cell-empty;
     }
 }

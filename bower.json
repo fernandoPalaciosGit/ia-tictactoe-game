@@ -20,6 +20,7 @@
     "tests"
   ],
   "dependencies": {
+    "material-design-lite": "~1.0.4",
     "modernizer": "~2.8.2",
     "normalize-css": "normalize.css#~3.0.3"
   }

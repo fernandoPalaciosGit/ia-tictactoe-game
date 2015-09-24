@@ -3,12 +3,60 @@
 <head lang="en">
     <meta charset="UTF-8">
     <script src="./bower_components/modernizer/modernizr.js"></script>
+    <link rel="shortcut icon" href="./images/cross.gif">
     <link rel="stylesheet" href="./bower_components/normalize-css/normalize.css"/>
     <link rel="stylesheet" href="./css/main.css"/>
-    <title>IA: tres en ralla</title>
+    <title>Inteligencia artificial: juego tres en ralla</title>
+    <link rel="stylesheet" href="./bower_components/material-design-lite/material.min.css">
+    <script src="./bower_components/material-design-lite/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 </head>
 <body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">Juego tres en ralla</span>
+            <div class="mdl-layout-spacer"></div>
+            <nav class="mdl-navigation mdl-layout--large-screen-only">
+                <a class="mdl-navigation__link"
+                   href="https://github.com/fernandoPalaciosGit/ia-tictactoe-game" target="_blank   ">Fork me in Github</a>
+            </nav>
+        </div>
+    </header>
 
+    <main class="ia-wrapper-matrix">
+
+        <!--matrix game-->
+        <div class="ia-matrix-game">
+            <div class="ia-matrix-game__row-box">
+                <div class="ia-matrix-game__cell-box"></div>
+                <div class="ia-matrix-game__cell-box"></div>
+                <div class="ia-matrix-game__cell-box"></div>
+            </div>
+            <div class="ia-matrix-game__row-box">
+                <div class="ia-matrix-game__cell-box ia-matrix-game__cell--fill ia-matrix-game__cell--circle"></div>
+                <div class="ia-matrix-game__cell-box"></div>
+                <div class="ia-matrix-game__cell-box"></div>
+            </div>
+            <div class="ia-matrix-game__row-box">
+                <div class="ia-matrix-game__cell-box"></div>
+                <div class="ia-matrix-game__cell-box"></div>
+                <div class="ia-matrix-game__cell-box ia-matrix-game__cell--fill ia-matrix-game__cell--cross"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mdl-mini-footer">
+        <div class="mdl-mini-footer__left-section">
+            <div class="mdl-logo">Title</div>
+            <ul class="mdl-mini-footer__link-list">
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Privacy & Terms</a></li>
+            </ul>
+        </div>
+    </footer>
+</div>
 <script src="./js/main.js"></script>
 </body>
 </html>
