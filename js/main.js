@@ -2,10 +2,11 @@
     'use strict';
 
     var IAGame = {
-        matrix: new Matrix(3, 3, 'js-matrix-'),
+        matrix: new Matrix(3, 3, 'ia-matrix-game', 'ia-matrix-game__cell-box'),
         init: function () {
             this.matrix.clearGrid();
-            console.dir(this.matrix.grid);
+            this.matrix.setStatusGrid(1, 1, Matrix.STATUSCELL.CIRCLE);
+            this.matrix.setStatusGrid(0, 2, Matrix.STATUSCELL.CROSS);
         }
     };
 
