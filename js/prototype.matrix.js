@@ -41,6 +41,7 @@
         },
         CIRCLE: {
             player: 'machine',
+            opponent: 'human',
             value: 1,
             getClass: function (coordX, coordY) {
                 return [this.cellName,
@@ -50,6 +51,7 @@
         },
         CROSS: {
             player: 'human',
+            opponent: 'machine',
             value: 2,
             getClass: function (coordX, coordY) {
                 return [this.cellName,
@@ -79,41 +81,28 @@
      * null || undefined --> reverse turn
      * @param selectTurn turrn selected into game
      */
-    // TODO so much ciclomatic complexity
     w.Matrix.prototype.setTurn = function (selectTurn) {
-        // default turn value
-        var turn = !this.isInitializeTurn() && 'EMPTY';
+        var turn = '',
+            gameStatus = this.constructor.STATUSCELL;
+
+        if (this.isInitializeTurn()) {
+            this.countTurn++;
+
+        } else {
+            turn = gameStatus['EMPTY'];
+        }
 
         // select especific turn
         if (_.isString(selectTurn)) {
             selectTurn = selectTurn.trim().toLowerCase();
-            switch (selectTurn) {
-                case 'machine':
-                    turn = 'CIRCLE';
-                    break;
-                case 'human':
-                    turn = 'CROSS';
-                    break;
-                case 'empty':
-                    turn = 'EMPTY';
-            }
+            turn = _.find(gameStatus, { player: selectTurn });
 
         // reverse turn after the first round
-        } else if (this.isInitializeTurn() && this.countTurn > 0) {
-            switch (this.turn.player) {
-                case 'machine':
-                    turn = 'CROSS';
-                    break;
-                case 'human':
-                    turn = 'CIRCLE';
-            }
+        } else if (this.isInitializeTurn() && this.countTurn > 1) {
+            turn = _.find(gameStatus, { player: this.turn.opponent });
         }
 
-        if (this.isInitializeTurn()) {
-            this.countTurn++;
-        }
-
-        this.turn = this.constructor.STATUSCELL[turn] || this.turn;
+        this.turn = turn || this.turn;
     };
 
     w.Matrix.prototype.isInitializeTurn = function () {

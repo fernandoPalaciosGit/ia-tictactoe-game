@@ -30,7 +30,6 @@
     "esnext": false,
     "node": true,
     "browser": true,
-    "mocha": true,
     "globals": {
         "_": false
     }
