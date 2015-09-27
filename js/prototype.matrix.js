@@ -3,7 +3,6 @@
 
     /**
      * create initial srtatus of matrix
-     * @param grid javascript object to logic game
      * @param rows number of rows
      * @param columns number of columns¡
      * @param wrapperName class dom from matrix element game
@@ -23,10 +22,13 @@
         this.cellName = cellName;
         this.rows = rows || 3;
         this.columns = columns || 3;
+        this.turn = null;
+        this.countTurn = 0;
         _initGrid.call(this);
     };
 
     /**
+     * Game turns
      * Status values for matrix cell
      */
     w.Matrix.STATUSCELL = {
@@ -38,6 +40,7 @@
             }
         },
         CIRCLE: {
+            player: 'machine',
             value: 1,
             getClass: function (coordX, coordY) {
                 return [this.cellName,
@@ -46,6 +49,7 @@
             }
         },
         CROSS: {
+            player: 'human',
             value: 2,
             getClass: function (coordX, coordY) {
                 return [this.cellName,
@@ -62,18 +66,71 @@
         return this.wrapperGame.getElementsByClassName('js-matrix-' + coordX + coordY)[0];
     };
 
-    w.Matrix.prototype.setStatusGrid = function (coordX, coordY, status) {
-        this.grid[coordX][coordY] = status.value;
-        this.getCell(coordX, coordY).className = status.getClass.call(this, coordX , coordY);
+    w.Matrix.prototype.setStatusGrid = function (coordX, coordY) {
+        this.setTurn(null);
+        this.grid[coordX][coordY] = this.turn.value;
+        this.getCell(coordX, coordY).className = this.turn.getClass.call(this, coordX , coordY);
+    };
+
+    /**
+     * empty --> EMPTY
+     * machine --> CIRCLE
+     * human --> CROSS
+     * null || undefined --> reverse turn
+     * @param selectTurn turrn selected into game
+     */
+    // TODO so much ciclomatic complexity
+    w.Matrix.prototype.setTurn = function (selectTurn) {
+        // default turn value
+        var turn = !this.isInitializeTurn() && 'EMPTY';
+
+        // select especific turn
+        if (_.isString(selectTurn)) {
+            selectTurn = selectTurn.trim().toLowerCase();
+            switch (selectTurn) {
+                case 'machine':
+                    turn = 'CIRCLE';
+                    break;
+                case 'human':
+                    turn = 'CROSS';
+                    break;
+                case 'empty':
+                    turn = 'EMPTY';
+            }
+
+        // reverse turn after the first round
+        } else if (this.isInitializeTurn() && this.countTurn > 0) {
+            switch (this.turn.player) {
+                case 'machine':
+                    turn = 'CROSS';
+                    break;
+                case 'human':
+                    turn = 'CIRCLE';
+            }
+        }
+
+        if (this.isInitializeTurn()) {
+            this.countTurn++;
+        }
+
+        this.turn = this.constructor.STATUSCELL[turn] || this.turn;
+    };
+
+    w.Matrix.prototype.isInitializeTurn = function () {
+        return !_.isNull(this.turn) && this.turn.value !== 0;
     };
 
     /**
      * Set grid to initial Status
      */
     w.Matrix.prototype.clearGrid = function () {
+        this.turn = null;
+        this.countTurn = 0;
+        this.setTurn('empty');
+
         for (var x = 0; x < this.rows; x++) {
             for (var y = 0; y < this.columns; y++) {
-                this.setStatusGrid(x, y, this.constructor.STATUSCELL.EMPTY);
+                this.setStatusGrid(x, y);
             }
         }
     };

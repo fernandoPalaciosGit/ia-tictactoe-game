@@ -32,7 +32,6 @@
     "browser": true,
     "mocha": true,
     "globals": {
-        "io": false,
-        "expect": false
+        "_": false
     }
 }

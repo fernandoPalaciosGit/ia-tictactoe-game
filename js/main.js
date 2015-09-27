@@ -5,8 +5,9 @@
         matrix: new Matrix(3, 3, 'ia-matrix-game', 'ia-matrix-game__cell-box'),
         init: function () {
             this.matrix.clearGrid();
-            this.matrix.setStatusGrid(1, 1, Matrix.STATUSCELL.CIRCLE);
-            this.matrix.setStatusGrid(0, 2, Matrix.STATUSCELL.CROSS);
+            this.matrix.setTurn('machine');
+            this.matrix.setStatusGrid(0, 2);
+            this.matrix.setStatusGrid(1, 1);
         }
     };
 
