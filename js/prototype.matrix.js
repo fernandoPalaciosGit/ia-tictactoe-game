@@ -61,6 +61,12 @@
         }
     };
 
+    w.Matrix.prototype.setPlayerMove = function (players, playerMove) {
+        if (this.isInitializeTurn()) {
+            _.find(players, { name: this.turn.player }).lastMove = playerMove;
+        }
+    };
+
     /**
      * dom class name structure : {className}-{column}{row}
      */
@@ -68,8 +74,9 @@
         return this.wrapperGame.getElementsByClassName('js-matrix-' + coordX + coordY)[0];
     };
 
-    w.Matrix.prototype.setStatusGrid = function (coordX, coordY) {
+    w.Matrix.prototype.setStatusGrid = function (coordX, coordY, players) {
         this.setTurn(null);
+        this.setPlayerMove(players, [coordX, coordY]);
         this.grid[coordX][coordY] = this.turn.value;
         this.getCell(coordX, coordY).className = this.turn.getClass.call(this, coordX , coordY);
     };
@@ -79,9 +86,10 @@
      * machine --> CIRCLE
      * human --> CROSS
      * null || undefined --> reverse turn
-     * @param selectTurn turrn selected into game
+     * @param gamer object turn selected into game
+     * @param gamerMove array coords onto grid of gamer movement
      */
-    w.Matrix.prototype.setTurn = function (selectTurn) {
+    w.Matrix.prototype.setTurn = function (gamer) {
         var turn = '',
             gameStatus = this.constructor.STATUSCELL;
 
@@ -93,9 +101,8 @@
         }
 
         // select especific turn
-        if (_.isString(selectTurn)) {
-            selectTurn = selectTurn.trim().toLowerCase();
-            turn = _.find(gameStatus, { player: selectTurn });
+        if (!_.isNull(gamer) && _.isString(gamer.name)) {
+            turn = _.find(gameStatus, { player: gamer.name });
 
         // reverse turn after the first round
         } else if (this.isInitializeTurn() && this.countTurn > 1) {
