@@ -1,8 +1,9 @@
-;(function (w, d, Matrix) {
+;(function (w, d, Matrix, Smart) {
     'use strict';
 
     var IAGame = {
         matrix: new Matrix(3, 3, 'ia-matrix-game', 'ia-matrix-game__cell-box'),
+        smart: new Smart(),
         players: {
             android: {
                 name: 'machine',
@@ -20,12 +21,19 @@
             this.matrix.clearGrid();
             this.matrix.setTurn(this.players.android);
         },
+        setRandomNextCell: function () {
+            var nextCell = this.smart.getRandomEmptyCell(this.matrix),
+                cellX = nextCell[0],
+                cellY = nextCell[1];
+
+            this.matrix.setStatusGrid(cellX, cellY, this.players);
+        },
         init: function () {
             this.resetGame();
-            this.matrix.setStatusGrid(0, 2, this.players);
-            this.matrix.setStatusGrid(1, 1, this.players);
+            this.setRandomNextCell();
+            this.setRandomNextCell();
         }
     };
 
     d.addEventListener('DOMContentLoaded', IAGame.init.bind(IAGame));
-}(window, document, window.Matrix));
+}(window, document, window.Matrix, window.Smart));

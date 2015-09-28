@@ -36,7 +36,8 @@
             value: 0,
             getClass: function (coordX, coordY) {
                 return [this.cellName,
-                    'js-matrix-' + coordX + coordY].join(' ');
+                    'js-matrix-' + coordX + coordY,
+                    'ia-matrix-game__cell--empty'].join(' ');
             }
         },
         CIRCLE: {

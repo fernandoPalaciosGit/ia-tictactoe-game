@@ -4,10 +4,6 @@
     transform-style: preserve-3d;
 }
 
-%disable-user-control {
-    pointer-events: none;
-}
-
 %hover-cell-empty {
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
     opacity: 0.8;
@@ -37,8 +33,8 @@
 }
 
 $matrix-box-square-size: 100px;
-$matrix-box-background: #8C9EFF;
-$matrix-box-background-fill: #536DFE;
+$matrix-box-border-empty: 1px solid #8C9EFF;
+$matrix-box-border-fill: 1px solid #536DFE;
 $matrix-box-separation: 10px;
 $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 3) + 150px;
 
@@ -62,7 +58,6 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     &__cell-box {
         cursor: pointer;
         display: inline-block;
-        background-color: $matrix-box-background;
         width: $matrix-box-square-size;
         height: $matrix-box-square-size;
         margin: $matrix-box-separation;
@@ -71,14 +66,18 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     }
 
     /*CELLS BEHAVIOUR*/
-    &__cell-box:active,
-    &__cell--fill {
-        background-color: $matrix-box-background-fill;
-        @extend %disable-user-control;
+    &__cell--empty {
+        border: $matrix-box-border-empty;
     }
 
     &__cell--fill {
         cursor: not-allowed;
+    }
+
+    &__cell-box:active,
+    &__cell--fill {
+        border: $matrix-box-border-fill;
+        @extend %hover-cell-empty;
     }
 
     &__cell--cross {
