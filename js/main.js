@@ -21,17 +21,32 @@
             this.matrix.clearGrid();
             this.matrix.setTurn(this.players.android);
         },
-        setRandomNextCell: function () {
+        setRandomNextTurn: function () {
             var nextCell = this.smart.getRandomEmptyCell(this.matrix),
                 cellX = nextCell[0],
                 cellY = nextCell[1];
 
             this.matrix.setStatusGrid(cellX, cellY, this.players);
         },
+        setNextTurn: function (evClick) {
+            var targetCell = evClick.currentTarget,
+                targetDataGrid = _.toArray(targetCell.dataset.cellGrid),
+                cellX = Number.parseInt(targetDataGrid[0], 10),
+                cellY = Number.parseInt(targetDataGrid[1], 10);
+
+            if (!this.matrix.isSelectedTurn(cellX, cellY)) {
+                this.matrix.setStatusGrid(cellX, cellY, this.players);
+                this.setRandomNextTurn();
+            }
+        },
         init: function () {
+            var gridCells = d.getElementsByClassName(this.matrix.cellName);
+
             this.resetGame();
-            this.setRandomNextCell();
-            this.setRandomNextCell();
+            this.setRandomNextTurn();
+            _.map(gridCells, _.bind(function (cell) {
+                cell.addEventListener('click', _.bind(this.setNextTurn, this), false);
+            }, this));
         }
     };
 

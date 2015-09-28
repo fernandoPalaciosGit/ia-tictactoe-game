@@ -117,6 +117,10 @@
         return !_.isNull(this.turn) && this.turn.value !== 0;
     };
 
+    w.Matrix.prototype.isSelectedTurn = function (coordX, coordY) {
+        return this.grid[coordX][coordY] !== 0;
+    };
+
     /**
      * Set grid to initial Status
      */
