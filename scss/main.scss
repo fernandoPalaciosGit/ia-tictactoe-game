@@ -4,7 +4,7 @@
     transform-style: preserve-3d;
 }
 
-%hover-cell-empty {
+%hover-cell {
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
     opacity: 0.8;
 }
@@ -33,7 +33,7 @@
 }
 
 $matrix-box-square-size: 100px;
-$matrix-box-border-empty: 1px solid #8C9EFF;
+$matrix-box-border: 1px solid #8C9EFF;
 $matrix-box-border-fill: 1px solid #536DFE;
 $matrix-box-separation: 10px;
 $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 3) + 150px;
@@ -62,14 +62,11 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
         height: $matrix-box-square-size;
         margin: $matrix-box-separation;
         border-radius: 5px;
+        border: $matrix-box-border;
         @extend %transition-smooth;
     }
 
     /*CELLS BEHAVIOUR*/
-    &__cell--empty {
-        border: $matrix-box-border-empty;
-    }
-
     &__cell--fill {
         cursor: not-allowed;
     }
@@ -77,7 +74,7 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     &__cell-box:active,
     &__cell--fill {
         border: $matrix-box-border-fill;
-        @extend %hover-cell-empty;
+        @extend %hover-cell;
     }
 
     &__cell--cross {
@@ -89,6 +86,6 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     }
 
     &__cell-box:not(.ia-matrix-game__cell--fill ):hover {
-        @extend %hover-cell-empty;
+        @extend %hover-cell;
     }
 }

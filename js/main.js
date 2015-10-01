@@ -1,54 +1,68 @@
-;(function (w, d, Matrix, Smart) {
+// jshint maxparams: 6
+;(function (w, d, Matrix, Smart, Player) {
     'use strict';
 
     var IAGame = {
-        matrix: new Matrix(3, 3, 'ia-matrix-game', 'ia-matrix-game__cell-box'),
+        matrix: new Matrix(3, 3, 'ia-matrix-game'),
         smart: new Smart(),
         players: {
-            android: {
-                name: 'machine',
-                lastMove: null
-            },
-            nando: {
-                name: 'human',
-                lastMove: null
-            }
+            android: new Player('machine', 'human', 1, 'ia-matrix-game__cell--circle'),
+            nando: new Player('human', 'machine', 2, 'ia-matrix-game__cell--cross')
         },
-        resetGame: function () {
-            _.map(this.players, function (player) {
-                player.lastMove = null;
+        resetGame: function (startPlayer) {
+            var players = this.players;
+
+            _.map(players, function (player) {
+                player.resetPlayerStatus();
             });
             this.matrix.clearGrid();
-            this.matrix.setTurn(this.players.android);
+            this.matrix.currentPlayerName = startPlayer.name;
         },
-        setRandomNextTurn: function () {
-            var nextCell = this.smart.getRandomEmptyCell(this.matrix),
-                cellX = nextCell[0],
-                cellY = nextCell[1];
-
-            this.matrix.setStatusGrid(cellX, cellY, this.players);
+        getRandomNextTurn: function () {
+            return this.smart.getRandomEmptyCell(this.matrix);
         },
-        setNextTurn: function (evClick) {
+        getSelectedNextTurn: function (evClick) {
             var targetCell = evClick.currentTarget,
                 targetDataGrid = _.toArray(targetCell.dataset.cellGrid),
                 cellX = Number.parseInt(targetDataGrid[0], 10),
                 cellY = Number.parseInt(targetDataGrid[1], 10);
 
-            if (!this.matrix.isSelectedTurn(cellX, cellY)) {
-                this.matrix.setStatusGrid(cellX, cellY, this.players);
-                this.setRandomNextTurn();
+            return [cellX, cellY];
+        },
+        play: function () {
+            var matrix = this.matrix,
+                currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
+                move = currentPlayer.getMove.call(this);
+
+            if (matrix.isAviableTurn.apply(matrix, move) && !_.isUndefined(currentPlayer)) {
+                var statusArgs = move.push(currentPlayer);
+
+                matrix.setStatusGrid.apply(matrix, statusArgs);
+                currentPlayer.setPlayerMove.apply(currentPlayer, move);
+                matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
             }
         },
         init: function () {
-            var gridCells = d.getElementsByClassName(this.matrix.cellName);
+            var machine = this.players.android,
+                human = this.players.nando,
+                starterPlayer = machine;
 
-            this.resetGame();
-            this.setRandomNextTurn();
-            _.map(gridCells, _.bind(function (cell) {
-                cell.addEventListener('click', _.bind(this.setNextTurn, this), false);
+            this.resetGame(starterPlayer);
+            Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell-fill', 'js-matrix-');
+            Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
+            human.setMove(this.getSelectedNextTurn);
+            machine.setMove(this.getRandomNextTurn);
+
+            // set play for machine
+            if (starterPlayer.name === 'machine') {
+                this.play();
+            }
+
+            _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
+                cell.addEventListener('click', _.bind(this.play, this), false);
             }, this));
         }
     };
 
     d.addEventListener('DOMContentLoaded', IAGame.init.bind(IAGame));
-}(window, document, window.Matrix, window.Smart));
+}(window, document, window.Matrix, window.Smart, window.Player));
