@@ -29,37 +29,44 @@
 
             return [cellX, cellY];
         },
-        play: function () {
+        play: function (ev) {
             var matrix = this.matrix,
                 currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
-                move = currentPlayer.getMove.call(this);
+                move = currentPlayer.getMove.call(this, ev),
+                isPlayedBox = false;
 
             if (matrix.isAviableTurn.apply(matrix, move) && !_.isUndefined(currentPlayer)) {
-                var statusArgs = move.push(currentPlayer);
-
-                matrix.setStatusGrid.apply(matrix, statusArgs);
+                move.push(currentPlayer);
+                matrix.setStatusGrid.apply(matrix, move);
                 currentPlayer.setPlayerMove.apply(currentPlayer, move);
                 matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
+                isPlayedBox = true;
             }
+
+            return isPlayedBox;
         },
         init: function () {
             var machine = this.players.android,
                 human = this.players.nando,
                 starterPlayer = machine;
 
-            this.resetGame(starterPlayer);
+            // initialize game parameters
             Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell-fill', 'js-matrix-');
             Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
+            this.resetGame(starterPlayer);
             human.setMove(this.getSelectedNextTurn);
             machine.setMove(this.getRandomNextTurn);
 
-            // set play for machine
+            // initialize game interaction
             if (starterPlayer.name === 'machine') {
                 this.play();
             }
 
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
-                cell.addEventListener('click', _.bind(this.play, this), false);
+                cell.addEventListener('click', _.bind(function (ev) {
+                    // first play onclick human, if box isplayed then play machine
+                    this.play(ev) && this.play();
+                }, this), false);
             }, this));
         }
     };

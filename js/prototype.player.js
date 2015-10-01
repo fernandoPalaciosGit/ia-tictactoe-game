@@ -9,7 +9,7 @@
         // Own properties
         this.name = playerName;
         this.opponent = opponentName;
-        // estado y clase que ocupa el jugador en el tablero
+        // status and style class that player occupied on the board
         this.matrix = {
             status: statusVal,
             class: cellClassName

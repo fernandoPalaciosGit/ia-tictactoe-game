@@ -47,7 +47,7 @@
     };
 
     w.Matrix.prototype.isAviableTurn = function (coordX, coordY) {
-        return this.grid[coordX][coordY] !== 0;
+        return this.grid[coordX][coordY] === 0;
     };
 
     /**
