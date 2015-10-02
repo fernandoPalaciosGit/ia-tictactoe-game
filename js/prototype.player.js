@@ -2,22 +2,30 @@
     'use strict';
 
     /**
-     * Game turns
-     * Status values for matrix cell
+     * Player of the tictactoe game
+     * @constructor Player
+     * @param {String} playerName - name ID for player
+     * @param {String} opponentName - name ID of player oponent
+     * @param {Number} statusVal - mark the status refereence of player onto Matrix board
+     * @param {String} cellClassName - ccs class refereence of player onto Matrix board
      */
     w.Player = function (playerName, opponentName, statusVal, cellClassName) {
-        // Own properties
         this.name = playerName;
         this.opponent = opponentName;
-        // status and style class that player occupied on the board
         this.matrix = {
             status: statusVal,
             class: cellClassName
         };
 
-        // Game Properties
+        /**
+         * Dinamic game properties
+         * @property {Array} lastMove - last position occupied by player turn
+         * @property {Number} countTurn - number of turns
+         * @property {Function} getMove - funtion to retrieve the position selected by the player
+         */
         this.lastMove = null;
         this.countTurn = 0;
+        /** @returns {Array} */
         this.getMove = null;
     };
 
@@ -30,7 +38,12 @@
         this.countTurn++;
     };
 
-    // statis interface to share common grid properties
+    /**
+     * Create own player css classes for board game
+     * @function setGridCellClass
+     * @memberof Player
+     * @static
+     */
     w.Player.setGridCellClass = function (cellClass, cellHook) {
         this.prototype.cellClass = cellClass;
         this.prototype.cellHook = cellHook;

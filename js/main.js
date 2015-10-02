@@ -51,7 +51,7 @@
                 starterPlayer = machine;
 
             // initialize game parameters
-            Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell-fill', 'js-matrix-');
+            Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell--fill', 'js-matrix-');
             Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
             this.resetGame(starterPlayer);
             human.setMove(this.getSelectedNextTurn);

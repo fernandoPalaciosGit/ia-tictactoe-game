@@ -2,10 +2,11 @@
     'use strict';
 
     /**
-     * create initial srtatus of matrix
-     * @param rows number of rows
-     * @param columns number of columns¡
-     * @param wrapperName class dom from matrix element game
+     * Matrix represents the game into board
+     * @constructor Matrix
+     * @param {Number} rows - number of rows
+     * @param {Number} columns - number of columns¡
+     * @param {HTMLElement} wrapperName - dom from matrix element game
      */
     w.Matrix = function (rows, columns, wrapperName) {
         var _initGrid = function () {
@@ -16,17 +17,20 @@
             }
         };
 
-        this.grid = null;
         this.wrapperGame = d.getElementsByClassName(wrapperName)[0];
         this.rows = rows || 3;
         this.columns = columns || 3;
+
+        /**
+         * Dinamic game properties
+         * @property {Array} grid - represent the status players onto the board
+         * @property {String} currentPlayer - @see Player.name
+         */
+        this.grid = null;
         this.currentPlayerName = null;
         _initGrid.call(this);
     };
 
-    /**
-     * dom class name structure : {className}-{column}{row}
-     */
     w.Matrix.prototype.getCell = function (coordX, coordY) {
         return this.wrapperGame.getElementsByClassName('js-matrix-' + coordX + coordY)[0];
     };
@@ -41,6 +45,12 @@
         return [this.cellClass, this.cellHook + coordX + coordY].join(' ');
     };
 
+    /**
+     * Create own matrix css classes for board game
+     * @function setGridCellClass
+     * @memberof Matrix
+     * @static
+     */
     w.Matrix.setGridCellClass = function (cellClass, cellHook) {
         this.prototype.cellClass = cellClass;
         this.prototype.cellHook = cellHook;

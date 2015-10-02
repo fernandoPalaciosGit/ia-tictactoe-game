@@ -85,7 +85,7 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
         @include background-game-image('./../images/circle.png');
     }
 
-    &__cell-box:not(.ia-matrix-game__cell--fill ):hover {
+    &__cell-box:not(#{&}__cell--fill):hover {
         @extend %hover-cell;
     }
 }
