@@ -50,10 +50,23 @@
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
                 move.push(currentPlayer);
-                this.matrix.setStatusGrid.apply(this.matrix, move);
                 currentPlayer.setPlayerMove.apply(currentPlayer, move);
                 this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
                 isPlayedBox = true;
+
+                // simulate delayed game, played by machine
+                if (playerName === 'machine') {
+                    var waitingDom = d.getElementById('waiting-game');
+
+                    waitingDom.classList.add('waiting-game--fadein');
+                    _.delay(_.bind(function () {
+                        this.matrix.setStatusGrid.apply(this.matrix, move);
+                        waitingDom.classList.remove('waiting-game--fadein');
+                    }, this), 1000);
+
+                } else {
+                    this.matrix.setStatusGrid.apply(this.matrix, move);
+                }
 
                 // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
@@ -96,6 +109,10 @@
                     this.play(evClick, 'human') && this.play(null, 'machine');
                 }, this), false);
             }, this));
+
+            d.getElementById('waiting-game').addEventListener('mdl-componentupgraded', function() {
+                this.MaterialProgress.setProgress(44);
+            });
         }
     };
 

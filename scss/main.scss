@@ -32,11 +32,11 @@
     background-size: contain;
 }
 
+$matrix-margin-top: 50px;
 $matrix-box-square-size: 100px;
 $matrix-box-border: 1px solid #8C9EFF;
 $matrix-box-border-fill: 1px solid #536DFE;
 $matrix-box-separation: 10px;
-$wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 3) + 150px;
 
 .mdl-mini-footer {
     position: fixed;
@@ -44,15 +44,20 @@ $wrapper-matrix-size: ($matrix-box-square-size * 3) + ($matrix-box-separation * 
     width: 100%;
 }
 
-.ia-wrapper-matrix {
-    @extend %blur-pixel;
-    height: $wrapper-matrix-size;
+#waiting-game {
+    visibility: hidden;
+    opacity: 0;
+    @extend %transition-smooth;
+
+    &.waiting-game--fadein {
+        visibility: visible;
+        opacity: 1;
+    }
 }
 
 .ia-matrix-game {
-    margin: 0 auto;
+    margin: $matrix-margin-top auto 0;
     text-align: center;
-    @include vertical-align(relative);
 
     /*CELLS STRUCTURE*/
     &__cell-box {
