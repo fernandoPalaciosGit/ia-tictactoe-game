@@ -2,7 +2,7 @@
 ;(function (w, d, Matrix, Smart, Player) {
     'use strict';
 
-    var IAGame = {
+    w.IAGame = {
         matrix: new Matrix(3, 3, 'ia-matrix-game'),
         smart: new Smart(),
         players: {
@@ -41,12 +41,13 @@
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
         },
-        play: function (ev) {
+        play: function (playerEvent, playerName) {
             var currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
-                /** @type {Array} move - coords of matrix player movement*/
-                move = currentPlayer.getMove.call(this, ev),
+                /** @type {Array} move - coords of matrix player movement @see Player.setMove */
+                move = currentPlayer.getMove.call(this, playerEvent),
                 isPlayedBox = false;
 
+            // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
                 move.push(currentPlayer);
                 this.matrix.setStatusGrid.apply(this.matrix, move);
@@ -54,11 +55,20 @@
                 this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
                 isPlayedBox = true;
 
-                // TODO : on machine constraint, discart turn
-            } else if (currentPlayer.name === 'human' && this.isNeedDiscartTurn(move, currentPlayer)) {
+                // discart an own box
+            } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
                 move.push(null);
                 this.matrix.setStatusGrid.apply(this.matrix, move);
                 currentPlayer.countTurn--;
+
+                // machine needs to autoplay game when discart turn
+                if (playerName === 'machine')  {
+                    this.play(null, 'machine');
+                }
+
+                // autoplay when machine turn do not play/discart corrent box
+            } else if (playerName === 'machine')  {
+                this.play(null, 'machine');
             }
 
             return isPlayedBox;
@@ -77,17 +87,17 @@
 
             // initialize game interaction
             if (starterPlayer.name === 'machine') {
-                this.play();
+                this.play(null, 'machine');
             }
 
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
-                cell.addEventListener('click', _.bind(function (ev) {
+                cell.addEventListener('click', _.bind(function (evClick) {
                     // first play onclick human, if box isplayed then play machine
-                    this.play(ev) && this.play();
+                    this.play(evClick, 'human') && this.play(null, 'machine');
                 }, this), false);
             }, this));
         }
     };
 
-    d.addEventListener('DOMContentLoaded', IAGame.init.bind(IAGame));
+    d.addEventListener('DOMContentLoaded', w.IAGame.init.bind(w.IAGame));
 }(window, document, window.Matrix, window.Smart, window.Player));

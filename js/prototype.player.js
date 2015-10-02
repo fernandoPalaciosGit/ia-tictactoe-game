@@ -25,7 +25,7 @@
          */
         this.lastMove = null;
         this.countTurn = 0;
-        /** @returns {Array} */
+        /** @returns {Array} @this window.IAGame */
         this.getMove = null;
     };
 
