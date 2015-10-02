@@ -29,18 +29,36 @@
 
             return [cellX, cellY];
         },
+        // play on aviable last 3 turn player
+        isAviableTurn: function (move, player) {
+            return !_.isUndefined(player) &&
+                    player.countTurn < 3 &&
+                    this.matrix.isEmptyTurn.apply(this.matrix, move);
+        },
+        // last 3 player turn, discart one turn
+        isNeedDiscartTurn: function (move, player) {
+            return !_.isUndefined(player) &&
+                    player.countTurn === 3 &&
+                    this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
+        },
         play: function (ev) {
-            var matrix = this.matrix,
-                currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
+            var currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
+                /** @type {Array} move - coords of matrix player movement*/
                 move = currentPlayer.getMove.call(this, ev),
                 isPlayedBox = false;
 
-            if (matrix.isAviableTurn.apply(matrix, move) && !_.isUndefined(currentPlayer)) {
+            if (this.isAviableTurn(move, currentPlayer)) {
                 move.push(currentPlayer);
-                matrix.setStatusGrid.apply(matrix, move);
+                this.matrix.setStatusGrid.apply(this.matrix, move);
                 currentPlayer.setPlayerMove.apply(currentPlayer, move);
-                matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
+                this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
                 isPlayedBox = true;
+
+                // TODO : on machine constraint, discart turn
+            } else if (currentPlayer.name === 'human' && this.isNeedDiscartTurn(move, currentPlayer)) {
+                move.push(null);
+                this.matrix.setStatusGrid.apply(this.matrix, move);
+                currentPlayer.countTurn--;
             }
 
             return isPlayedBox;

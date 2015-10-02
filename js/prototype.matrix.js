@@ -35,6 +35,10 @@
         return this.wrapperGame.getElementsByClassName('js-matrix-' + coordX + coordY)[0];
     };
 
+    w.Matrix.prototype.getStatusGrid = function (coordX, coordY) {
+        return this.grid[coordX][coordY];
+    };
+
     w.Matrix.prototype.setStatusGrid = function (coordX, coordY, player) {
         this.grid[coordX][coordY] = !_.isNull(player) ? player.matrix.status : 0;
         this.getCell(coordX, coordY).className = !_.isNull(player) ?
@@ -56,7 +60,7 @@
         this.prototype.cellHook = cellHook;
     };
 
-    w.Matrix.prototype.isAviableTurn = function (coordX, coordY) {
+    w.Matrix.prototype.isEmptyTurn = function (coordX, coordY) {
         return this.grid[coordX][coordY] === 0;
     };
 
