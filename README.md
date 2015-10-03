@@ -26,14 +26,13 @@ $grunt default
 
 ### Control del Juego
 ###### Status Game
-___________
-empty = 0
-circle = machine = 1
-cross = human = 2
+- empty = 0
+- circle = machine = 1
+- cross = human = 2
 
 
 ###### Status Matrix
-
+```markdown
 /************************************
 *			*			*			*
 *			*			*			*
@@ -53,3 +52,4 @@ cross = human = 2
 *			*			*			*
 *			*			*			*
 ************************************/
+```
