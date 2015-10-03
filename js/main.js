@@ -9,6 +9,7 @@
             android: new Player('machine', 'human', 1, 'ia-matrix-game__cell--circle'),
             nando: new Player('human', 'machine', 2, 'ia-matrix-game__cell--cross')
         },
+        domWaitingMachine: d.getElementById('waiting-game'),
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -41,8 +42,34 @@
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
         },
+        setBoardOnAviableTurn: function (playerName, move) {
+            if (playerName === 'machine') {
+                this.domWaitingMachine.classList.add('waiting-game--fadein');
+                // simulate delayed game, played by machine
+                _.delay(_.bind(function () {
+                    this.matrix.setStatusGrid.apply(this.matrix, move);
+                    this.domWaitingMachine.classList.remove('waiting-game--fadein');
+                }, this), 1000);
+
+            } else {
+                this.matrix.setStatusGrid.apply(this.matrix, move);
+            }
+        },
+        setBoardOnDiscartTurn: function (playerName, move) {
+            if (playerName === 'machine') {
+                this.domWaitingMachine.classList.add('waiting-game--fadein');
+                _.delay(_.bind(function () {
+                    this.matrix.setStatusGrid.apply(this.matrix, move);
+                    // machine needs to autoplay game when discart turn
+                    this.play(null, 'machine');
+                }, this), 500);
+
+            } else {
+                this.matrix.setStatusGrid.apply(this.matrix, move);
+            }
+        },
         play: function (playerEvent, playerName) {
-            var currentPlayer = _.find(this.players, { name: this.matrix.currentPlayerName }),
+            var currentPlayer = _.find(this.players, { name: playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
                 move = currentPlayer.getMove.call(this, playerEvent),
                 isPlayedBox = false;
@@ -53,33 +80,15 @@
                 currentPlayer.setPlayerMove.apply(currentPlayer, move);
                 this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
                 isPlayedBox = true;
+                this.setBoardOnAviableTurn(playerName, move);
 
-                // simulate delayed game, played by machine
-                if (playerName === 'machine') {
-                    var waitingDom = d.getElementById('waiting-game');
-
-                    waitingDom.classList.add('waiting-game--fadein');
-                    _.delay(_.bind(function () {
-                        this.matrix.setStatusGrid.apply(this.matrix, move);
-                        waitingDom.classList.remove('waiting-game--fadein');
-                    }, this), 1000);
-
-                } else {
-                    this.matrix.setStatusGrid.apply(this.matrix, move);
-                }
-
-                // discart an own box
+            // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
                 move.push(null);
-                this.matrix.setStatusGrid.apply(this.matrix, move);
                 currentPlayer.countTurn--;
+                this.setBoardOnDiscartTurn(playerName, move);
 
-                // machine needs to autoplay game when discart turn
-                if (playerName === 'machine')  {
-                    this.play(null, 'machine');
-                }
-
-                // autoplay when machine turn do not play/discart corrent box
+            // autoplay when machine turn do not play/discart corrent box
             } else if (playerName === 'machine')  {
                 this.play(null, 'machine');
             }
@@ -98,11 +107,12 @@
             human.setMove(this.getSelectedNextTurn);
             machine.setMove(this.getRandomNextTurn);
 
-            // initialize game interaction
+            // machine play first
             if (starterPlayer.name === 'machine') {
                 this.play(null, 'machine');
             }
 
+            // initialize game interaction
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
                 cell.addEventListener('click', _.bind(function (evClick) {
                     // first play onclick human, if box isplayed then play machine
@@ -110,8 +120,9 @@
                 }, this), false);
             }, this));
 
-            d.getElementById('waiting-game').addEventListener('mdl-componentupgraded', function() {
-                this.MaterialProgress.setProgress(44);
+            // Inti materialize loading, on machine turn
+            this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
+                this.MaterialProgress.setProgress(45);
             });
         }
     };
