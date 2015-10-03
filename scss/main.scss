@@ -32,28 +32,57 @@
     background-size: contain;
 }
 
+$waiting-backgroundcolor: rgba(255, 255, 255, 0.5);
+$waiting-z-index: 5;
+$above-z-index: 10;
 $matrix-margin-top: 50px;
 $matrix-box-square-size: 100px;
 $matrix-box-border: 1px solid #8C9EFF;
 $matrix-box-border-fill: 1px solid #536DFE;
 $matrix-box-separation: 10px;
 
+.mdl-layout__header {
+    z-index: $above-z-index;
+}
+
 .mdl-mini-footer {
+    z-index: $above-z-index;
     position: fixed;
     bottom: 0;
     width: 100%;
 }
 
-#waiting-game {
-    visibility: hidden;
-    opacity: 0;
-    @extend %transition-smooth;
+.ia-matrix-wrapper {
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+
+    &:before {
+        content: "";
+        display: block;
+        position: fixed;
+        height: 100%;
+        background: $waiting-backgroundcolor;
+        z-index: $waiting-z-index;
+    }
+
+    &:before, #waiting-game {
+        visibility: hidden;
+        opacity: 0;
+        width: 100%;
+        @extend %transition-smooth;
+    }
 
     &.waiting-game--fadein {
-        visibility: visible;
-        opacity: 1;
+
+        &:before, #waiting-game {
+            visibility: visible;
+            opacity: 1;
+        }
     }
 }
+
 
 .ia-matrix-game {
     margin: $matrix-margin-top auto 0;

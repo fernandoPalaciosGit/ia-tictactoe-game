@@ -9,7 +9,8 @@
             android: new Player('machine', 'human', 1, 'ia-matrix-game__cell--circle'),
             nando: new Player('human', 'machine', 2, 'ia-matrix-game__cell--cross')
         },
-        domWaitingMachine: d.getElementById('waiting-game'),
+        domWaitingMachine: d.querySelector('#waiting-game'),
+        domWrapperGame: d.querySelector('.ia-matrix-wrapper'),
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -44,11 +45,11 @@
         },
         setBoardOnAviableTurn: function (playerName, move) {
             if (playerName === 'machine') {
-                this.domWaitingMachine.classList.add('waiting-game--fadein');
+                this.domWrapperGame.classList.add('waiting-game--fadein');
                 // simulate delayed game, played by machine
                 _.delay(_.bind(function () {
                     this.matrix.setStatusGrid.apply(this.matrix, move);
-                    this.domWaitingMachine.classList.remove('waiting-game--fadein');
+                    this.domWrapperGame.classList.remove('waiting-game--fadein');
                 }, this), 1000);
 
             } else {
@@ -57,7 +58,7 @@
         },
         setBoardOnDiscartTurn: function (playerName, move) {
             if (playerName === 'machine') {
-                this.domWaitingMachine.classList.add('waiting-game--fadein');
+                this.domWrapperGame.classList.add('waiting-game--fadein');
                 _.delay(_.bind(function () {
                     this.matrix.setStatusGrid.apply(this.matrix, move);
                     // machine needs to autoplay game when discart turn
