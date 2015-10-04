@@ -3,11 +3,11 @@
     'use strict';
 
     w.IAGame = {
-        matrix: new Matrix(3, 3, 'ia-matrix-game'),
+        matrix: new Matrix(3, 3, 3, 'ia-matrix-game'),
         smart: new Smart(),
         players: {
-            android: new Player('machine', 'human', 1, 'ia-matrix-game__cell--circle'),
-            nando: new Player('human', 'machine', 2, 'ia-matrix-game__cell--cross')
+            nando: new Player('human', 'machine', 2),
+            android: new Player('machine', 'human', 1)
         },
         domWaitingMachine: d.querySelector('#waiting-game'),
         domWrapperGame: d.querySelector('.ia-matrix-wrapper'),
@@ -19,8 +19,13 @@
             _.map(players, function (player) {
                 player.resetPlayerStatus();
             });
+
             this.matrix.clearGrid();
             this.matrix.currentPlayerName = startPlayer.name;
+
+            if (startPlayer.name === 'machine') {
+                this.play(null, 'machine');
+            }
         },
         getRandomNextTurn: function () {
             return this.smart.getRandomEmptyCell(this.matrix);
@@ -72,6 +77,27 @@
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
+        // TODO
+        checkHitsRow: function (/*row, player*/) {
+            return 0;
+        },
+        // TODO
+        checkHitsColumn: function (/*column, player*/) {
+            return 0;
+        },
+        // TODO
+        checkHitsDiagonal: function (/*row, column, player*/) {
+            return 0;
+        },
+        isCheckedlineToWin: function (move, player) {
+            var column = move[0],
+                row = move[1],
+                needHits = this.matrix.hits;
+
+            return this.checkHitsRow(row, player) ===  needHits ||
+                    this.checkHitsColumn(column, player) === needHits ||
+                    this.checkHitsDiagonal(row, column, player) === needHits;
+        },
         play: function (playerEvent, playerName) {
             var currentPlayer = _.find(this.players, { name: playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
@@ -95,11 +121,17 @@
                 this.play(null, 'machine');
             }
 
+            // on winner stop Game
+            if (this.isCheckedlineToWin(move, currentPlayer)) {
+                w.alert(currentPlayer.shoutOfVictory);
+                currentPlayer.countWinner++;
+                this.resetGame('machine');
+            }
             return isPlayedBox;
         },
         init: function () {
-            var machine = this.players.android,
-                human = this.players.nando,
+            var human = this.players.nando,
+                machine = this.players.android,
                 starterPlayer = machine;
 
             // initalize aclarative pannels
@@ -121,14 +153,13 @@
             // initialize game parameters
             Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell--fill', 'js-matrix-');
             Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
-            this.resetGame(starterPlayer);
+            human.setAssetSettings('Fuck Yeah!!!!', 'ia-matrix-game__cell--cross');
+            machine.setAssetSettings('Machines can do the Work....', 'ia-matrix-game__cell--circle');
+            // set functions to resolve movement of players
             human.setMove(this.getSelectedNextTurn);
             machine.setMove(this.getRandomNextTurn);
-
-            // machine play first
-            if (starterPlayer.name === 'machine') {
-                this.play(null, 'machine');
-            }
+            // new game
+            this.resetGame(starterPlayer);
 
             // initialize game interaction
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {

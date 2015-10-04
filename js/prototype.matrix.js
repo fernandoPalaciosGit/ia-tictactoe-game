@@ -6,9 +6,10 @@
      * @constructor Matrix
      * @param {Number} rows - number of rows
      * @param {Number} columns - number of columns¡
-     * @param {HTMLElement} wrapperName - dom from matrix element game
-     */
-    w.Matrix = function (rows, columns, wrapperName) {
+     * @param {HtmlElement} wrapperName - dom from matrix element game
+     * @param {Number} hits - minimum number of points that a player must reach to win
+        */
+        w.Matrix = function (rows, columns, hits, wrapperName) {
         var _initGrid = function () {
             this.grid = new Array(this.columns);
 
@@ -20,6 +21,7 @@
         this.wrapperGame = d.getElementsByClassName(wrapperName)[0];
         this.rows = rows || 3;
         this.columns = columns || 3;
+        this.hits = hits;
 
         /**
          * Dinamic game properties

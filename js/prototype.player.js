@@ -9,12 +9,11 @@
      * @param {Number} statusVal - mark the status refereence of player onto Matrix board
      * @param {String} cellClassName - ccs class refereence of player onto Matrix board
      */
-    w.Player = function (playerName, opponentName, statusVal, cellClassName) {
+    w.Player = function (playerName, opponentName, statusVal) {
         this.name = playerName;
         this.opponent = opponentName;
         this.matrix = {
-            status: statusVal,
-            class: cellClassName
+            status: statusVal
         };
 
         /**
@@ -22,9 +21,11 @@
          * @property {Array} lastMove - last position occupied by player turn
          * @property {Number} countTurn - number of turns
          * @property {Function} getMove - funtion to retrieve the position selected by the player
+         * @property {Number} countWinner - winner count times
          */
         this.lastMove = null;
         this.countTurn = 0;
+        this.countWinner = 0;
         /** @returns {Array} @this window.IAGame */
         this.getMove = null;
     };
@@ -49,13 +50,21 @@
         this.prototype.cellHook = cellHook;
     };
 
+    /**
+     * Customize entity properties of player
+     */
+    w.Player.prototype.setAssetSettings = function (text, classDom) {
+        this.shoutOfVictory = text;
+        this.matrix.activeClass = classDom;
+    };
+
     w.Player.prototype.resetPlayerStatus = function () {
         this.lastMove = null;
         this.countTurn = 0;
-        this.getMove = null;
+        this.countWinner = 0;
     };
 
     w.Player.prototype.getClass = function (coordX, coordY) {
-        return [this.cellClass, this.cellHook + coordX + coordY, this.matrix.class].join(' ');
+        return [this.cellClass, this.cellHook + coordX + coordY, this.matrix.activeClass].join(' ');
     };
 }(window));
