@@ -37,7 +37,8 @@
         isAviableTurn: function (move, player) {
             return !_.isUndefined(player) &&
                     player.countTurn < 3 &&
-                    this.matrix.isEmptyTurn.apply(this.matrix, move);
+                    this.matrix.isEmptyTurn.apply(this.matrix, move) &&
+                    !_.isEqual(move, player.lastMove);
         },
         // last 3 player turn, discart one turn
         isNeedDiscartTurn: function (move, player) {
@@ -45,30 +46,30 @@
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
         },
-        setBoardOnAviableTurn: function (playerName, move) {
-            if (playerName === 'machine') {
+        setBoardOnAviableTurn: function (move, player) {
+            if (player.name === 'machine') {
                 this.domWrapperGame.classList.add('waiting-game--fadein');
                 // simulate delayed game, played by machine
                 _.delay(_.bind(function () {
-                    this.matrix.setStatusGrid.apply(this.matrix, move);
+                    this.matrix.setStatusGrid(move[0], move[1], player);
                     this.domWrapperGame.classList.remove('waiting-game--fadein');
                 }, this), 1000);
 
             } else {
-                this.matrix.setStatusGrid.apply(this.matrix, move);
+                this.matrix.setStatusGrid(move[0], move[1], player);
             }
         },
-        setBoardOnDiscartTurn: function (playerName, move) {
-            if (playerName === 'machine') {
+        setBoardOnDiscartTurn: function (move, player) {
+            if (player.name === 'machine') {
                 this.domWrapperGame.classList.add('waiting-game--fadein');
                 _.delay(_.bind(function () {
-                    this.matrix.setStatusGrid.apply(this.matrix, move);
+                    this.matrix.setStatusGrid(move[0], move[1], null);
                     // machine needs to autoplay game when discart turn
                     this.play(null, 'machine');
                 }, this), 500);
 
             } else {
-                this.matrix.setStatusGrid.apply(this.matrix, move);
+                this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
         play: function (playerEvent, playerName) {
@@ -79,17 +80,15 @@
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
-                move.push(currentPlayer);
-                currentPlayer.setPlayerMove.apply(currentPlayer, move);
+                currentPlayer.setPlayerMove(move, +1);
+                this.setBoardOnAviableTurn(move, currentPlayer);
                 this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
                 isPlayedBox = true;
-                this.setBoardOnAviableTurn(playerName, move);
 
             // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
-                move.push(null);
-                currentPlayer.countTurn--;
-                this.setBoardOnDiscartTurn(playerName, move);
+                currentPlayer.setPlayerMove(move, -1);
+                this.setBoardOnDiscartTurn(move, currentPlayer);
 
             // autoplay when machine turn do not play/discart corrent box
             } else if (playerName === 'machine')  {

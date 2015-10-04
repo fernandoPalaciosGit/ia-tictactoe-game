@@ -33,9 +33,9 @@
         this.getMove = fn || Function.constructor();
     };
 
-    w.Player.prototype.setPlayerMove = function (coordX, coordY) {
-        this.lastMove = [coordX, coordY];
-        this.countTurn++;
+    w.Player.prototype.setPlayerMove = function (coords, score) {
+        this.lastMove = coords;
+        this.countTurn += score;
     };
 
     /**
