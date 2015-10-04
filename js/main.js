@@ -11,6 +11,8 @@
         },
         domWaitingMachine: d.querySelector('#waiting-game'),
         domWrapperGame: d.querySelector('.ia-matrix-wrapper'),
+        domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
+        domWrapperRules: d.querySelector('.demo-card-image'),
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -101,6 +103,22 @@
                 human = this.players.nando,
                 starterPlayer = machine;
 
+            // initalize aclarative pannels
+            _.map(this.domLinksRules, function (link) {
+                link.addEventListener('click', _.bind(function (evClick) {
+                    evClick.preventDefault();
+                    var toogle = evClick.currentTarget.dataset.toggleClass || 'close';
+                    if (toogle === 'open') {
+                        this.domWrapperGame.classList.add('hide-pannel');
+                        this.domWrapperRules.classList.add('show--rules');
+
+                    } else if (toogle === 'close') {
+                        this.domWrapperRules.classList.remove('show--rules');
+                        this.domWrapperGame.classList.remove('hide-pannel');
+                    }
+                }, this), false);
+            }, this);
+
             // initialize game parameters
             Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell--fill', 'js-matrix-');
             Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
@@ -128,5 +146,5 @@
         }
     };
 
-    d.addEventListener('DOMContentLoaded', w.IAGame.init.bind(w.IAGame));
+    d.addEventListener('DOMContentLoaded', w.IAGame.init.bind(w.IAGame), false);
 }(window, document, window.Matrix, window.Smart, window.Player));

@@ -1,45 +1,9 @@
-%blur-pixel {
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-}
+@import 'variables';
+@import 'mixinsAndPlaceholders';
 
-%hover-cell {
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
-    opacity: 0.8;
+.hide-pannel {
+    display: none !important;
 }
-
-%transition-smooth {
-    -webkit-backface-visibility: hidden;
-    -webkit-transform: translateZ(0) scale(1.0, 1.0);
-    transition: all 0.2s ease-in 0s;
-    -webkit-transition: all 0.2s ease-in 0s;
-    -moz-transition: all 0.2s ease-in 0s;
-}
-
-@mixin vertical-align($position: relative) {
-    position: $position;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-}
-
-@mixin background-game-image($url: '') {
-    background-image: url($url);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-size: contain;
-}
-
-$waiting-backgroundcolor: rgba(255, 255, 255, 0.5);
-$waiting-z-index: 5;
-$above-z-index: 10;
-$matrix-margin-top: 50px;
-$matrix-box-square-size: 100px;
-$matrix-box-border: 1px solid #8C9EFF;
-$matrix-box-border-fill: 1px solid #536DFE;
-$matrix-box-separation: 10px;
 
 .mdl-layout__header {
     z-index: $above-z-index;
@@ -63,10 +27,15 @@ $matrix-box-separation: 10px;
         display: block;
         position: fixed;
         height: 100%;
-        background: $waiting-backgroundcolor;
+        background: $white-blur-bgd-color;
         z-index: $waiting-z-index;
     }
 
+    #waiting-game {
+        z-index: $above-z-index;
+    }
+
+    /* On active waiting behaviour*/
     &:before, #waiting-game {
         visibility: hidden;
         opacity: 0;
@@ -82,7 +51,6 @@ $matrix-box-separation: 10px;
         }
     }
 }
-
 
 .ia-matrix-game {
     margin: $matrix-margin-top auto 0;
@@ -102,7 +70,7 @@ $matrix-box-separation: 10px;
 
     /*CELLS BEHAVIOUR*/
     &__cell--fill {
-        cursor: not-allowed;
+
     }
 
     &__cell-box:active,
@@ -123,3 +91,48 @@ $matrix-box-separation: 10px;
         @extend %hover-cell;
     }
 }
+
+.demo-card-image {
+    visibility: hidden;
+    opacity: 0;
+    width: 100%;
+    margin: $matrix-game-rules-top auto 0;
+
+    &.show--rules{
+        @extend %transition-smooth;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &.mdl-card {
+        width: $matrix-game-rules-width;
+        height: $matrix-game-rules-height;
+        background: url('../images/board-circle-cross.jpg') center / cover;
+    }
+
+    & > .mdl-card__actions {
+        height: 52px;
+        padding: 16px;
+        color: white;
+        background: $black-blur-bgd-color;
+    }
+
+    &__filename {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .mdl-button--icon {
+        right: 25px;
+        top: -8px;
+        float: right;
+        color: #DB1600;
+    }
+
+    .mdl-card__supporting-text {
+        background-color: $white-blur-bgd-color;
+        width: 100%;
+        color: black;
+    }
+ }

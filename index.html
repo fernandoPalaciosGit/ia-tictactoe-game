@@ -9,8 +9,8 @@
     <script src="./bower_components/lodash/lodash.min.js"></script>
     <link rel="stylesheet" href="./bower_components/normalize-css/normalize.css"/>
     <link rel="stylesheet" href="./bower_components/material-design-lite/material.min.css">
-    <script async type="text/css" src="https://fonts.googleapis.com/icon?family=Material+Icons"></script>
-    <script async type="text/css" src="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <link rel="stylesheet" href="./css/main.css"/>
 </head>
 <body>
@@ -48,13 +48,28 @@
         </div>
     </main>
 
+    <div class="demo-card-image mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__supporting-text mdl-card--expand">
+            <button class="js-show-panel-rules mdl-button mdl-js-button mdl-button--icon mdl-button--colored" data-toggle-class="close">
+                <i class="material-icons">close</i>
+            </button>
+
+            <ul>
+                <li>Un jugador tiene como maximo 3 casillas activas.</li>
+                <li>Al tercer turno se debe sustituir una casilla ocupada por otra vacia.</li>
+                <li>No se puede repetir turno sobre la casilla descartada anteriormente.</li>
+                <li>Gana el jugador que antes consifga 3 casillas alineadas.</li>
+            </ul>
+        </div>
+
+        <div class="mdl-card__actions">
+            <span class="demo-card-image__filename">Juego de tres en Ralla</span>
+        </div>
+    </div>
+
     <footer class="mdl-mini-footer">
         <div class="mdl-mini-footer__left-section">
-            <div class="mdl-logo">Title</div>
-            <ul class="mdl-mini-footer__link-list">
-                <li><a href="#">Help</a></li>
-                <li><a href="#">Privacy & Terms</a></li>
-            </ul>
+            <div class="mdl-logo"><a data-toggle-class="open" class="js-show-panel-rules mdl-color-text--white" href="#">Reglas de Juego</a></div>
         </div>
     </footer>
 </div>
