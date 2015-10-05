@@ -8,8 +8,8 @@
      * @param {Number} columns - number of columns¡
      * @param {HtmlElement} wrapperName - dom from matrix element game
      * @param {Number} hits - minimum number of points that a player must reach to win
-        */
-        w.Matrix = function (rows, columns, hits, wrapperName) {
+     */
+    w.Matrix = function (rows, columns, hits, wrapperName) {
         var _initGrid = function () {
             this.grid = new Array(this.columns);
 

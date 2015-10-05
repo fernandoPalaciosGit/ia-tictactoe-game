@@ -27,7 +27,7 @@
     "maxstatements": 13,
     "maxparams": 4,
     "noarg": true,
-    "esnext": false,
+    "esnext": true,
     "node": true,
     "browser": true,
     "globals": {

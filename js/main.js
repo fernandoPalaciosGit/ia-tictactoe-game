@@ -52,17 +52,23 @@
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
         },
         setBoardOnAviableTurn: function (move, player) {
+            var readyBoard = Promise.defer();
+
             if (player.name === 'machine') {
                 this.domWrapperGame.classList.add('waiting-game--fadein');
                 // simulate delayed game, played by machine
                 _.delay(_.bind(function () {
                     this.matrix.setStatusGrid(move[0], move[1], player);
                     this.domWrapperGame.classList.remove('waiting-game--fadein');
+                    readyBoard.resolve();
                 }, this), 1000);
 
             } else {
                 this.matrix.setStatusGrid(move[0], move[1], player);
+                readyBoard.resolve();
             }
+
+            return readyBoard.promise;
         },
         setBoardOnDiscartTurn: function (move, player) {
             if (player.name === 'machine') {
@@ -77,13 +83,19 @@
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
-        // TODO
-        checkHitsRow: function (/*row, player*/) {
-            return 0;
+        checkHitsRow: function (row, player) {
+            for (var i = 0, hits = 0; i < this.matrix.rows; i++) {
+                hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
+            }
+
+            return hits;
         },
-        // TODO
-        checkHitsColumn: function (/*column, player*/) {
-            return 0;
+        checkHitsColumn: function (column, player) {
+            for (var i = 0, hits = 0; i < this.matrix.columns; i++) {
+                hits += this.matrix.grid[column][i] === player.matrix.status ? 1 : 0;
+            }
+
+            return hits;
         },
         // TODO
         checkHitsDiagonal: function (/*row, column, player*/) {
@@ -102,32 +114,40 @@
             var currentPlayer = _.find(this.players, { name: playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
                 move = currentPlayer.getMove.call(this, playerEvent),
-                isPlayedBox = false;
+                isPlayedBox = Promise.defer();
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
                 currentPlayer.setPlayerMove(move, +1);
-                this.setBoardOnAviableTurn(move, currentPlayer);
-                this.matrix.currentPlayerName = _.find(this.players, { name: currentPlayer.opponent }).name;
-                isPlayedBox = true;
+                this.setBoardOnAviableTurn(move, currentPlayer)
+                    .then(_.bind(function () {
+                        // change player to oponent
+                        var oponentName = _.find(this.players, { name: currentPlayer.opponent });
+
+                        // on winner stop Game
+                        if (this.isCheckedlineToWin(move, currentPlayer)) {
+                            w.alert(currentPlayer.shoutOfVictory);
+                            currentPlayer.countWinner++;
+                            this.resetGame(oponentName);
+
+                        // the only time the next (oponent) player play
+                        } else {
+                            isPlayedBox.resolve(true);
+                        }
+                    }, this));
 
             // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
                 currentPlayer.setPlayerMove(move, -1);
                 this.setBoardOnDiscartTurn(move, currentPlayer);
+                isPlayedBox.resolve(false);
 
             // autoplay when machine turn do not play/discart corrent box
             } else if (playerName === 'machine')  {
                 this.play(null, 'machine');
             }
 
-            // on winner stop Game
-            if (this.isCheckedlineToWin(move, currentPlayer)) {
-                w.alert(currentPlayer.shoutOfVictory);
-                currentPlayer.countWinner++;
-                this.resetGame('machine');
-            }
-            return isPlayedBox;
+            return isPlayedBox.promise;
         },
         init: function () {
             var human = this.players.nando,
@@ -165,7 +185,11 @@
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
                 cell.addEventListener('click', _.bind(function (evClick) {
                     // first play onclick human, if box isplayed then play machine
-                    this.play(evClick, 'human') && this.play(null, 'machine');
+                    this.play(evClick, 'human')
+                        .then(_.bind(function (isPlayedTurn) {
+                            isPlayedTurn && this.play(null, 'machine');
+                        }, this));
+
                 }, this), false);
             }, this));
 

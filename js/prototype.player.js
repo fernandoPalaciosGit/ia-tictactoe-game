@@ -61,7 +61,6 @@
     w.Player.prototype.resetPlayerStatus = function () {
         this.lastMove = null;
         this.countTurn = 0;
-        this.countWinner = 0;
     };
 
     w.Player.prototype.getClass = function (coordX, coordY) {
