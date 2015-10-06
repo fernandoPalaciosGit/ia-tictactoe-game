@@ -4,7 +4,6 @@
 
     w.IAGame = {
         matrix: new Matrix(3, 3, 3, 'ia-matrix-game'),
-        smart: new Smart(),
         players: {
             nando: new Player('human', 'machine', 2),
             android: new Player('machine', 'human', 1)
@@ -27,9 +26,14 @@
                 this.play(null, 'machine');
             }
         },
+        // select random movement for machine
         getRandomNextTurn: function () {
-            return this.smart.getRandomEmptyCell(this.matrix);
+            var matrixIndexX = this.matrix.rows - 1,
+                matrixIndexY = this.matrix.columns - 1;
+
+            return [_.random(0, matrixIndexX), _.random(0, matrixIndexY)];
         },
+        // retrieve on click movement for human
         getSelectedNextTurn: function (evClick) {
             var targetCell = evClick.currentTarget,
                 targetDataGrid = _.toArray(targetCell.dataset.cellGrid),
@@ -84,7 +88,7 @@
             }
         },
         checkHitsRow: function (row, player) {
-            for (var i = 0, hits = 0; i < this.matrix.rows; i++) {
+            for (var i = 0, hits = 0; i < this.matrix.hits; i++) {
                 hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
             }
 
@@ -97,9 +101,15 @@
 
             return hits;
         },
-        // TODO
-        checkHitsDiagonal: function (/*row, column, player*/) {
-            return 0;
+        checkHitsDiagonal: function (diagonal, player) {
+            var status = player.matrix.status,
+                matrix = this.matrix.grid,
+                hits = 0;
+
+            hits += matrix[0][1 - diagonal] === status ? 1 : 0;
+            hits += matrix[1][1] === status ? 1 : 0;
+            hits += matrix[2][1 + diagonal] === status ? 1 : 0;
+            return hits;
         },
         isCheckedlineToWin: function (move, player) {
             var column = move[0],
@@ -108,7 +118,8 @@
 
             return this.checkHitsRow(row, player) ===  needHits ||
                     this.checkHitsColumn(column, player) === needHits ||
-                    this.checkHitsDiagonal(row, column, player) === needHits;
+                    this.checkHitsDiagonal(1, player) === needHits ||
+                    this.checkHitsDiagonal(-1, player) === needHits;
         },
         play: function (playerEvent, playerName) {
             var currentPlayer = _.find(this.players, { name: playerName }),
