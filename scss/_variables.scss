@@ -10,3 +10,24 @@ $matrix-box-separation: 10px;
 $matrix-game-rules-top: 25px;
 $matrix-game-rules-width: 500px;
 $matrix-game-rules-height: 450px;
+
+// Mached winner Cells
+$game-match-cell-border: 6px solid darkred;
+$game-match-cell-border-offset: 3px;
+$game-match-cell-size: $matrix-box-square-size + (4 * $matrix-box-separation);
+$game-match-line-properties: (
+    column: (
+        borderType: 'right',
+        width: 50%,
+        height: $game-match-cell-size,
+        top: -($game-match-cell-size - $matrix-box-square-size)/2,
+        left: -$game-match-cell-border-offset
+    ),
+    row: (
+        borderType: 'bottom',
+        width: $game-match-cell-size,
+        height: 50%,
+        top: -$game-match-cell-border-offset,
+        left: -($game-match-cell-size - $matrix-box-square-size)/2
+    )
+);

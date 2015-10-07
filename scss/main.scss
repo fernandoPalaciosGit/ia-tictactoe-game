@@ -65,6 +65,7 @@
         margin: $matrix-box-separation;
         border-radius: 5px;
         border: $matrix-box-border;
+        position: relative;
         @extend %transition-smooth;
     }
 
@@ -89,6 +90,25 @@
 
     &__cell-box:not(#{&}__cell--fill):hover {
         @extend %hover-cell;
+    }
+
+    /* WINNER STATUS CELLS */
+    @for $col from 0 through 2 {
+        @for $row from 0 through 2 {
+            @each $typeLine, $property in $game-match-line-properties {
+                $cell: if($typeLine == 'column', #{$col}#{$row}, #{$row}#{$col});
+
+                &--match-#{$typeLine}-#{$col} [data-cell-grid="#{$cell}"]:after {
+                    @include game-match-cell-status(
+                        map-get($property, width),
+                        map-get($property, height),
+                        map-get($property, top),
+                        map-get($property, left)
+                    );
+                    border-#{map-get($property, borderType)}: $game-match-cell-border;
+                }
+            }
+        }
     }
 }
 

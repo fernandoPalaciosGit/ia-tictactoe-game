@@ -37,3 +37,13 @@
     background-size: 100% 100%;
     background-size: contain;
 }
+
+@mixin game-match-cell-status ($w: 50%, $h: 50%, $t: 5px, $l: 5px) {
+    content: '';
+    position: absolute;
+    display: block;
+    width: $w;
+    height: $h;
+    top: $t;
+    left: $l;
+}
