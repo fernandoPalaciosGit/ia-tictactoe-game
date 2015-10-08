@@ -94,7 +94,6 @@
 
     /* WINNER STATUS CELLS
      * ia-matrix-game--match-[column|row]-[0|1|2]
-     * ia-matrix-game--match-diagonal-[1|2]
      */
     @for $col from 0 through 2 {
         @for $row from 0 through 2 {
@@ -108,32 +107,36 @@
                         map-get($property, top),
                         map-get($property, left)
                     );
-                    border-#{map-get($property, borderType)}: $game-match-cell-border;
+                    border-#{map-get($property, borderType)}-width: 6px;
                 }
             }
         }
     }
 
+    /* WINNER STATUS CELLS
+     * ia-matrix-game--match-diagonal-[1|2]
+     */
     $listDiagonal: (1, -1);
-    $diagonalProp : map-get($game-match-line-properties, column);
+    $diagonalProp : map-get($game-match-line-properties, column); //select column as reference diagonal properties
     @each $diagonal in  $listDiagonal{
-        $sideA : 0#{abs($diagonal - 1)};
-        $sideCenter : 11;
-        $sideB : 2#{abs($diagonal + 1)};
+        $cellA : 0#{abs($diagonal - 1)};
+        $cellCenter : 11;
+        $cellB : 2#{abs($diagonal + 1)};
 
         &--match-diagonal-#{index($listDiagonal, $diagonal)} {
-            [data-cell-grid="#{$sideA}"]:after,
-            [data-cell-grid="#{$sideCenter}"]:after,
-            [data-cell-grid="#{$sideB}"]:after {
+            [data-cell-grid="#{$cellA}"]:after,
+            [data-cell-grid="#{$cellCenter}"]:after,
+            [data-cell-grid="#{$cellB}"]:after {
                 @include game-match-cell-status(
                     map-get($diagonalProp, width),
-                    map-get($diagonalProp, height),
-                    map-get($diagonalProp, top),
+                    map-get($diagonalProp, height) * 2,
+                    -90px,
                     map-get($diagonalProp, left)
                 );
-                border-#{map-get($diagonalProp, borderType)}: $game-match-cell-border;
-                transform-origin: right;
+                transform-origin: center;
                 transform: rotate(#{$diagonal * 45}deg);
+                border-right-width: 6px;
+                border-#{map-get($diagonalProp, borderType)}-width: 6px;
             }
         }
     }
