@@ -92,7 +92,10 @@
         @extend %hover-cell;
     }
 
-    /* WINNER STATUS CELLS */
+    /* WINNER STATUS CELLS
+     * ia-matrix-game--match-[column|row]-[0|1|2]
+     * ia-matrix-game--match-diagonal-[1|2]
+     */
     @for $col from 0 through 2 {
         @for $row from 0 through 2 {
             @each $typeLine, $property in $game-match-line-properties {
@@ -107,6 +110,30 @@
                     );
                     border-#{map-get($property, borderType)}: $game-match-cell-border;
                 }
+            }
+        }
+    }
+
+    $listDiagonal: (1, -1);
+    $diagonalProp : map-get($game-match-line-properties, column);
+    @each $diagonal in  $listDiagonal{
+        $sideA : 0#{abs($diagonal - 1)};
+        $sideCenter : 11;
+        $sideB : 2#{abs($diagonal + 1)};
+
+        &--match-diagonal-#{index($listDiagonal, $diagonal)} {
+            [data-cell-grid="#{$sideA}"]:after,
+            [data-cell-grid="#{$sideCenter}"]:after,
+            [data-cell-grid="#{$sideB}"]:after {
+                @include game-match-cell-status(
+                    map-get($diagonalProp, width),
+                    map-get($diagonalProp, height),
+                    map-get($diagonalProp, top),
+                    map-get($diagonalProp, left)
+                );
+                border-#{map-get($diagonalProp, borderType)}: $game-match-cell-border;
+                transform-origin: right;
+                transform: rotate(#{$diagonal * 45}deg);
             }
         }
     }
