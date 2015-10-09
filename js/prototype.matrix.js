@@ -71,6 +71,7 @@
      */
     w.Matrix.prototype.clearGrid = function () {
         this.currentPlayerName = null;
+        this.wrapperGame.className = 'ia-matrix-game';
 
         for (var x = 0; x < this.rows; x++) {
             for (var y = 0; y < this.columns; y++) {

@@ -87,11 +87,18 @@
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
+        setWinnerCellHits: function (type, index, hits) {
+            if (hits === this.matrix.hits) {
+                var mainClass = 'ia-matrix-game';
+                this.matrix.wrapperGame.className = [mainClass, mainClass + '--match-' + type + '-' + index].join(' ');
+            }
+        },
         checkHitsRow: function (row, player) {
             for (var i = 0, hits = 0; i < this.matrix.hits; i++) {
                 hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
             }
 
+            this.setWinnerCellHits('row', row, hits);
             return hits;
         },
         checkHitsColumn: function (column, player) {
@@ -99,6 +106,7 @@
                 hits += this.matrix.grid[column][i] === player.matrix.status ? 1 : 0;
             }
 
+            this.setWinnerCellHits('column', column, hits);
             return hits;
         },
         checkHitsDiagonal: function (diagonal, player) {
@@ -109,6 +117,7 @@
             hits += matrix[0][1 - diagonal] === status ? 1 : 0;
             hits += matrix[1][1] === status ? 1 : 0;
             hits += matrix[2][1 + diagonal] === status ? 1 : 0;
+            this.setWinnerCellHits('diagonal', diagonal === 1 ? 1 : 2, hits);
             return hits;
         },
         isCheckedlineToWin: function (move, player) {
