@@ -26,7 +26,7 @@
         </div>
     </header>
 
-    <main class="ia-matrix-wrapper">
+    <main class="ia-matrix-wrapper hide-pannel">
         <div id="waiting-game" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
 
         <div class="ia-matrix-game">
@@ -47,6 +47,30 @@
             </div>
         </div>
     </main>
+
+    <form id="config-game-actions" action="#">
+        <p>
+            <label for="playerStarter">¿Who start first?</label>
+            <select name="playerStarter" id="playerStarter">
+                <option value="human">you</option>
+                <option value="machine">the android inside</option>
+            </select>
+        </p>
+        <p>
+            <label for="playerChip">Your brand identity</label>
+            <select name="playerChip" id="playerChip">
+                <option value="circle">O</option>
+                <option value="cross">X</option>
+            </select>
+        </p>
+        <p>
+            <label for="playerGrunt">Your Shout of victory</label>
+            <input type="text" name="playerGrunt" id="playerGrunt">
+        </p>
+        <p>
+            <input type="submit" value="Init Game"/>
+        </p>
+    </form>
 
     <div class="demo-card-image mdl-card mdl-shadow--2dp">
         <div class="mdl-card__supporting-text mdl-card--expand">
@@ -73,7 +97,6 @@
         </div>
     </footer>
 </div>
-<script src="./js/prototype.smart.js"></script>
 <script src="./js/prototype.player.js"></script>
 <script src="./js/prototype.matrix.js"></script>
 <script src="./js/main.js"></script>

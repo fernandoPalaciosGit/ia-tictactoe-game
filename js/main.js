@@ -1,5 +1,5 @@
 // jshint maxparams: 6
-;(function (w, d, Matrix, Smart, Player) {
+;(function (w, d, Matrix, Player) {
     'use strict';
 
     w.IAGame = {
@@ -12,6 +12,7 @@
         domWrapperGame: d.querySelector('.ia-matrix-wrapper'),
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
         domWrapperRules: d.querySelector('.demo-card-image'),
+        formConfigGame: d.getElementById('config-game-actions'),
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -169,11 +170,7 @@
 
             return isPlayedBox.promise;
         },
-        init: function () {
-            var human = this.players.nando,
-                machine = this.players.android,
-                starterPlayer = machine;
-
+        initGameInteraction: function () {
             // initalize aclarative pannels
             _.map(this.domLinksRules, function (link) {
                 link.addEventListener('click', _.bind(function (evClick) {
@@ -189,17 +186,6 @@
                     }
                 }, this), false);
             }, this);
-
-            // initialize game parameters
-            Player.setGridCellClass('ia-matrix-game__cell-box ia-matrix-game__cell--fill', 'js-matrix-');
-            Matrix.setGridCellClass('ia-matrix-game__cell-box', 'js-matrix-');
-            human.setAssetSettings('Fuck Yeah!!!!', 'ia-matrix-game__cell--cross');
-            machine.setAssetSettings('Machines can do the Work....', 'ia-matrix-game__cell--circle');
-            // set functions to resolve movement of players
-            human.setMove(this.getSelectedNextTurn);
-            machine.setMove(this.getRandomNextTurn);
-            // new game
-            this.resetGame(starterPlayer);
 
             // initialize game interaction
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
@@ -217,8 +203,60 @@
             this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
                 this.MaterialProgress.setProgress(45);
             });
+        },
+        // initialize game parameters
+        initGameAssets: function (humanConfig) {
+            var human = this.players.nando,
+                machine = this.players.android,
+                chips = ['circle', 'cross'],
+                gameConfig = {
+                    classPlayer: {
+                        human: 'ia-matrix-game__cell--' + humanConfig.chip,
+                        machine: 'ia-matrix-game__cell--' + _.without(chips, humanConfig.chip)
+                    },
+                    classCell: {
+                        player: ['ia-matrix-game__cell-box', 'ia-matrix-game__cell--fill'].join(' '),
+                        board: ['ia-matrix-game__cell-box', 'ia-matrix-game__cell--empty'].join(' '),
+                        hookJS: 'js-matrix-'
+                    },
+                    text: {
+                        human: humanConfig.winnerText,
+                        machine: 'Machines can do the Work....'
+                    }
+                };
+
+            Player.setGridCellClass(gameConfig.classCell.player, gameConfig.classCell.hookJS);
+            Matrix.setGridCellClass(gameConfig.classCell.board, gameConfig.classCell.hookJS);
+            human.setAssetSettings(gameConfig.text.human, gameConfig.classPlayer.human);
+            machine.setAssetSettings(gameConfig.text.machine, gameConfig.classPlayer.machine);
+            // set functions to resolve movement of players
+            human.setMove(this.getSelectedNextTurn);
+            machine.setMove(this.getRandomNextTurn);
+        },
+        initGame: function () {
+            var domForm = w.IAGame.formConfigGame,
+                playerStarter = domForm.playerStarter.options[domForm.playerStarter.selectedIndex],
+                playerChip = domForm.playerChip.options[domForm.playerChip.selectedIndex],
+                playerGrunt = domForm.playerGrunt,
+                selectedConfig = {
+                    playerName: playerStarter.value,
+                    chip: playerChip.value,
+                    winnerText: playerGrunt.value
+                },
+                starterPlayer = _.find(this.players, { name: selectedConfig.playerName });
+
+            this.initGameAssets(selectedConfig);
+            this.initGameInteraction();
+            this.resetGame(starterPlayer);
         }
     };
 
-    d.addEventListener('DOMContentLoaded', w.IAGame.init.bind(w.IAGame), false);
-}(window, document, window.Matrix, window.Smart, window.Player));
+    d.addEventListener('DOMContentLoaded', function () {
+        w.IAGame.formConfigGame.addEventListener('submit', function (evForm) {
+            evForm.preventDefault();
+            this.classList.add('hide-pannel');
+            w.IAGame.domWrapperGame.classList.remove('hide-pannel');
+            w.IAGame.initGame();
+        }, false);
+    }, false);
+}(window, document, window.Matrix, window.Player));
