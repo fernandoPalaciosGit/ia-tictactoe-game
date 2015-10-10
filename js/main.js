@@ -49,11 +49,33 @@
                     this.matrix.isEmptyTurn.apply(this.matrix, move) &&
                     !_.isEqual(move, player.lastMove);
         },
+        // check with this movement if añy line is going to empty for opponent winner
+        isCellUnBlockLine: function (move, player) {
+            var column = move[0],
+                row = move[1],
+                needHits = this.matrix.hits - 1,
+                isMoveOnDiagonal = function (moveA, moveB) {
+                    return _.isEqual(move, moveA) || _.isEqual(move, [1, 1]) || _.isEqual(move, moveB);
+                };
+
+            return this.checkHitsRow(row, player) === needHits ||
+                this.checkHitsColumn(column, player) === needHits ||
+                (isMoveOnDiagonal([0, 0], [2, 2]) && this.checkHitsDiagonal(1, player) === needHits) ||
+                (isMoveOnDiagonal([0, 2], [2, 0]) && this.checkHitsDiagonal(-1, player) === needHits);
+        },
         // last 3 player turn, discart one turn
         isNeedDiscartTurn: function (move, player) {
-            return !_.isUndefined(player) &&
+            var needDiscart =
+                    !_.isUndefined(player) &&
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
+
+            // IA for machine : do not discart the cell if oponnet with this movement wins the line
+            if (needDiscart && player.name === 'machine') {
+                needDiscart = !this.isCellUnBlockLine(move, _.find(this.players, { name: player.opponent }));
+            }
+
+            return needDiscart;
         },
         setBoardOnAviableTurn: function (move, player) {
             var readyBoard = Promise.defer();
