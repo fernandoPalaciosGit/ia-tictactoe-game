@@ -26,24 +26,24 @@
         </div>
     </header>
 
-    <main class="ia-matrix-wrapper hide-pannel">
+    <main id="ia-matrix-wrapper" class="hide-pannel">
         <div id="waiting-game" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
 
         <div class="ia-matrix-game">
             <div>
-                <div data-cell-grid="02" class="ia-matrix-game__cell-box js-matrix-02"></div>
-                <div data-cell-grid="12" class="ia-matrix-game__cell-box js-matrix-12"></div>
-                <div data-cell-grid="22" class="ia-matrix-game__cell-box js-matrix-22"></div>
+                <div data-cell-grid="02" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-02"></div>
+                <div data-cell-grid="12" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-12"></div>
+                <div data-cell-grid="22" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-22"></div>
             </div>
             <div>
-                <div data-cell-grid="01" class="ia-matrix-game__cell-box js-matrix-01"></div>
-                <div data-cell-grid="11" class="ia-matrix-game__cell-box js-matrix-11"></div>
-                <div data-cell-grid="21" class="ia-matrix-game__cell-box js-matrix-21"></div>
+                <div data-cell-grid="01" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-01"></div>
+                <div data-cell-grid="11" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-11"></div>
+                <div data-cell-grid="21" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-21"></div>
             </div>
             <div>
-                <div data-cell-grid="00" class="ia-matrix-game__cell-box js-matrix-00"></div>
-                <div data-cell-grid="10" class="ia-matrix-game__cell-box js-matrix-10"></div>
-                <div data-cell-grid="20" class="ia-matrix-game__cell-box js-matrix-20"></div>
+                <div data-cell-grid="00" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-00"></div>
+                <div data-cell-grid="10" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-10"></div>
+                <div data-cell-grid="20" class="ia-matrix-game__cell-box ia-matrix-game__cell--empty js-matrix-20"></div>
             </div>
         </div>
     </main>
@@ -51,21 +51,23 @@
     <form id="config-game-actions" action="#">
         <p>
             <label for="playerStarter">¿Who start first?</label>
-            <select name="playerStarter" id="playerStarter">
-                <option value="human">you</option>
-                <option value="machine">the android inside</option>
+            <select name="playerStarter" id="playerStarter" required>
+                <option value="" disabled selected></option>
+                <option value="human">yourself</option>
+                <option value="machine">the android inside machine</option>
             </select>
         </p>
         <p>
             <label for="playerChip">Your brand identity</label>
-            <select name="playerChip" id="playerChip">
+            <select name="playerChip" id="playerChip" required>
+                <option value="" disabled selected></option>
                 <option value="circle">O</option>
                 <option value="cross">X</option>
             </select>
         </p>
         <p>
             <label for="playerGrunt">Your Shout of victory</label>
-            <input type="text" name="playerGrunt" id="playerGrunt">
+            <input type="text" name="playerGrunt" id="playerGrunt" required>
         </p>
         <p>
             <input type="submit" value="Init Game"/>
@@ -74,7 +76,8 @@
 
     <div class="demo-card-image mdl-card mdl-shadow--2dp">
         <div class="mdl-card__supporting-text mdl-card--expand">
-            <button class="js-show-panel-rules mdl-button mdl-js-button mdl-button--icon mdl-button--colored" data-toggle-class="close">
+            <button class="js-show-panel-rules mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
+                    data-toggle-action="close" data-toggle-info-element="config-game-actions">
                 <i class="material-icons">close</i>
             </button>
 
@@ -93,7 +96,10 @@
 
     <footer class="mdl-mini-footer">
         <div class="mdl-mini-footer__left-section">
-            <div class="mdl-logo"><a data-toggle-class="open" class="js-show-panel-rules mdl-color-text--white" href="#">Reglas de Juego</a></div>
+            <div class="mdl-logo">
+                <a class="js-show-panel-rules mdl-color-text--white" href="#"
+                   data-toggle-action="open" data-toggle-info-element="config-game-actions" >Reglas de Juego</a>
+            </div>
         </div>
     </footer>
 </div>

@@ -14,9 +14,15 @@
     position: fixed;
     bottom: 0;
     width: 100%;
+    padding: 20px;
+
+    .mdl-logo {
+        margin: 0;
+        line-height: 1;
+    }
 }
 
-.ia-matrix-wrapper {
+#ia-matrix-wrapper {
     user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

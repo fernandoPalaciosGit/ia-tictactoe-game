@@ -9,7 +9,7 @@
             android: new Player('machine', 'human', 1)
         },
         domWaitingMachine: d.querySelector('#waiting-game'),
-        domWrapperGame: d.querySelector('.ia-matrix-wrapper'),
+        domWrapperGame: d.getElementById('ia-matrix-wrapper'),
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
         domWrapperRules: d.querySelector('.demo-card-image'),
         formConfigGame: d.getElementById('config-game-actions'),
@@ -170,41 +170,7 @@
 
             return isPlayedBox.promise;
         },
-        initGameInteraction: function () {
-            // initalize aclarative pannels
-            _.map(this.domLinksRules, function (link) {
-                link.addEventListener('click', _.bind(function (evClick) {
-                    evClick.preventDefault();
-                    var toogle = evClick.currentTarget.dataset.toggleClass || 'close';
-                    if (toogle === 'open') {
-                        this.domWrapperGame.classList.add('hide-pannel');
-                        this.domWrapperRules.classList.add('show--rules');
-
-                    } else if (toogle === 'close') {
-                        this.domWrapperRules.classList.remove('show--rules');
-                        this.domWrapperGame.classList.remove('hide-pannel');
-                    }
-                }, this), false);
-            }, this);
-
-            // initialize game interaction
-            _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
-                cell.addEventListener('click', _.bind(function (evClick) {
-                    // first play onclick human, if box isplayed then play machine
-                    this.play(evClick, 'human')
-                        .then(_.bind(function (isPlayedTurn) {
-                            isPlayedTurn && this.play(null, 'machine');
-                        }, this));
-
-                }, this), false);
-            }, this));
-
-            // Inti materialize loading, on machine turn
-            this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
-                this.MaterialProgress.setProgress(45);
-            });
-        },
-        // initialize game parameters
+        // initialize configuration game parameters
         initGameAssets: function (humanConfig) {
             var human = this.players.nando,
                 machine = this.players.android,
@@ -232,6 +198,18 @@
             // set functions to resolve movement of players
             human.setMove(this.getSelectedNextTurn);
             machine.setMove(this.getRandomNextTurn);
+
+            // initialize game interaction
+            _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
+                cell.addEventListener('click', _.bind(function (evClick) {
+                    // first play onclick human, if box isplayed then play machine
+                    this.play(evClick, 'human')
+                        .then(_.bind(function (isPlayedTurn) {
+                            isPlayedTurn && this.play(null, 'machine');
+                        }, this));
+
+                }, this), false);
+            }, this));
         },
         initGame: function () {
             var domForm = w.IAGame.formConfigGame,
@@ -246,17 +224,45 @@
                 starterPlayer = _.find(this.players, { name: selectedConfig.playerName });
 
             this.initGameAssets(selectedConfig);
-            this.initGameInteraction();
             this.resetGame(starterPlayer);
+        },
+        init: function () {
+            // initalize informative pannels
+            _.map(this.domLinksRules, function (link) {
+                link.addEventListener('click', _.bind(function (evClick) {
+                    evClick.preventDefault();
+                    var elTarget = evClick.currentTarget,
+                        toggleAction = elTarget.dataset.toggleAction || 'close',
+                        toggleEl = d.getElementById(elTarget.dataset.toggleInfoElement);
+
+                    if (toggleAction === 'open') {
+                        toggleEl.classList.add('hide-pannel');
+                        this.domWrapperRules.classList.add('show--rules');
+
+                    } else if (toggleAction === 'close') {
+                        toggleEl.classList.remove('hide-pannel');
+                        this.domWrapperRules.classList.remove('show--rules');
+                    }
+                }, this), false);
+            }, this);
+
+            // Inti materialize loading, on machine turn
+            this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
+                this.MaterialProgress.setProgress(45);
+            });
+
+            // start game after choose form options game
+            w.IAGame.formConfigGame.addEventListener('submit', function (evForm) {
+                evForm.preventDefault();
+                this.classList.add('hide-pannel');
+                w.IAGame.domWrapperGame.classList.remove('hide-pannel');
+                _.map(d.querySelectorAll('[data-toggle-info-element]'), function (link) {
+                    link.dataset.toggleInfoElement = 'ia-matrix-wrapper';
+                });
+                w.IAGame.initGame();
+            }, false);
         }
     };
 
-    d.addEventListener('DOMContentLoaded', function () {
-        w.IAGame.formConfigGame.addEventListener('submit', function (evForm) {
-            evForm.preventDefault();
-            this.classList.add('hide-pannel');
-            w.IAGame.domWrapperGame.classList.remove('hide-pannel');
-            w.IAGame.initGame();
-        }, false);
-    }, false);
+    d.addEventListener('DOMContentLoaded', _.bind(w.IAGame.init, w.IAGame), false);
 }(window, document, window.Matrix, window.Player));
