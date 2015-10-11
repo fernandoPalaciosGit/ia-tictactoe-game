@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Include into ./git/hooks/pre-push
+grunt preci
+
