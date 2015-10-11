@@ -1,5 +1,5 @@
 // jshint maxparams: 6
-;(function (w, d, Matrix, Player) {
+(function (w, d, Matrix, Player) {
     'use strict';
 
     w.IAGame = {
@@ -89,13 +89,17 @@
             }
         },
         setWinnerCellHits: function (type, index, hits) {
+            var mainClass = 'ia-matrix-game';
+
             if (hits === this.matrix.hits) {
-                var mainClass = 'ia-matrix-game';
                 this.matrix.wrapperGame.className = [mainClass, mainClass + '--match-' + type + '-' + index].join(' ');
             }
         },
         checkHitsRow: function (row, player) {
-            for (var i = 0, hits = 0; i < this.matrix.hits; i++) {
+            var i = 0,
+                hits = 0;
+
+            for (; i < this.matrix.hits; i++) {
                 hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
             }
 
@@ -103,7 +107,10 @@
             return hits;
         },
         checkHitsColumn: function (column, player) {
-            for (var i = 0, hits = 0; i < this.matrix.columns; i++) {
+            var i = 0,
+                hits = 0;
+
+            for (; i < this.matrix.columns; i++) {
                 hits += this.matrix.grid[column][i] === player.matrix.status ? 1 : 0;
             }
 

@@ -1,10 +1,12 @@
 module.exports = function (grunt) {
     'use strict';
 
-    var timeGrunt = require('time-grunt');
+    var timeGrunt = require('time-grunt'),
+        targetJS = ['js/**/*.js', 'Gruntfile.js'];
 
     // loading apckages
     timeGrunt(grunt);
+    grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jscs');
@@ -12,7 +14,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         jscs: {
             files: {
-                src: ['js/**/*.js', 'Gruntfile.js']
+                src: targetJS
             },
             options: {
                 config: '.jscsrc',
@@ -23,7 +25,15 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all: ['js/**/*.js', 'Gruntfile.js']
+            all: targetJS
+        },
+        eslint: {
+            options: {
+                format: require('eslint-tap'),
+                configFile: 'eslint.json',
+                quiet: true
+            },
+            target: targetJS
         },
         sass: {
             options: {
@@ -38,5 +48,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['sass:dist', 'jshint', 'jscs']);
+    grunt.registerTask('default', ['sass:dist', 'jshint', 'jscs', 'eslint']);
 };

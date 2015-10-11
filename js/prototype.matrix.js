@@ -1,4 +1,4 @@
-;(function (w, d) {
+(function (w, d) {
     'use strict';
 
     /**
@@ -11,9 +11,11 @@
      */
     w.Matrix = function (rows, columns, hits, wrapperName) {
         var _initGrid = function () {
+            var i = 0;
+
             this.grid = new Array(this.columns);
 
-            for (var i = 0; i < this.rows; i++) {
+            for (; i < this.rows; i++) {
                 this.grid[i] = new Array(this.columns);
             }
         };
@@ -70,11 +72,14 @@
      * Set grid to initial Status
      */
     w.Matrix.prototype.clearGrid = function () {
+        var x = 0,
+            y = 0;
+
         this.currentPlayerName = null;
         this.wrapperGame.className = 'ia-matrix-game';
 
-        for (var x = 0; x < this.rows; x++) {
-            for (var y = 0; y < this.columns; y++) {
+        for (; x < this.rows; x++) {
+            for (; y < this.columns; y++) {
                 this.setStatusGrid(x, y, null);
             }
         }
