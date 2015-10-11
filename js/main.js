@@ -147,9 +147,12 @@
 
                         // on winner stop Game
                         if (this.isCheckedlineToWin(move, currentPlayer)) {
-                            w.alert(currentPlayer.shoutOfVictory);
-                            currentPlayer.countWinner++;
-                            this.resetGame(oponentName);
+                            // delay one instance for v8 let webkit render css
+                            _.delay(_.bind(function () {
+                                w.alert(currentPlayer.shoutOfVictory);
+                                currentPlayer.countWinner++;
+                                this.resetGame(oponentName);
+                            }, this), 10);
 
                         // the only time the next (oponent) player play
                         } else {

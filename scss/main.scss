@@ -113,7 +113,7 @@
                         map-get($property, top),
                         map-get($property, left)
                     );
-                    border-#{map-get($property, borderType)}-width: 6px;
+                    border-#{map-get($property, borderType)}-width: 12px;
                 }
             }
         }
@@ -141,8 +141,7 @@
                 );
                 transform-origin: center;
                 transform: rotate(#{$diagonal * 45}deg);
-                border-right-width: 6px;
-                border-#{map-get($diagonalProp, borderType)}-width: 6px;
+                border-#{map-get($diagonalProp, borderType)}-width: 12px;
             }
         }
     }
