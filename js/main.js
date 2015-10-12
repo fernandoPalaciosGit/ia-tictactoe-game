@@ -1,5 +1,5 @@
-// jshint maxparams: 6, maxcomplexity: 9
-(function (w, d, Matrix, Player) {
+// jshint maxparams: 5
+(function (w, d, Matrix, Player, checkManager) {
     'use strict';
 
     w.IAGame = {
@@ -43,34 +43,9 @@
 
             return [cellX, cellY];
         },
-        // check with this movement if añy line is going to empty for opponent winner
-        isCellUnBlockLine: function (move, player) {
-            var column = move[0],
-                row = move[1],
-                needHits = this.matrix.hits - 1,
-                isMoveOnDiagonal = function (moveA, moveB) {
-                    return _.isEqual(move, moveA) || _.isEqual(move, [1, 1]) || _.isEqual(move, moveB);
-                };
-
-            return this.checkHitsRow(row, player) === needHits ||
-                this.checkHitsColumn(column, player) === needHits ||
-                (isMoveOnDiagonal([0, 0], [2, 2]) && this.checkHitsDiagonal(1, player) === needHits) ||
-                (isMoveOnDiagonal([0, 2], [2, 0]) && this.checkHitsDiagonal(-1, player) === needHits);
-        },
-        checkCompleteRow: function (/*row, player*/) {
-            return true;
-        },
-        checkCompleteColumn: function (/*column, player*/) {
-            return true;
-        },
-        checkCompleteDiagonal: function (/*diagonal, player*/) {
-            return true;
-        },
         // MOVEMENT : play turn
         isAviableTurn: function (move, player) {
             var opponent = _.find(this.players, { name: player.opponent }),
-                column = move[0],
-                row = move[1],
                 needPlayTurn =
                     !_.isUndefined(player) &&
                     player.countTurn < 3 &&
@@ -79,17 +54,11 @@
 
             // IA machine : check best oportunity for win
             if (needPlayTurn && player.name === 'machine' && player.countTurn > 1) {
-                // move to do line winner
-                needPlayTurn = this.checkCompleteRow(row, player) ||
-                    this.checkCompleteColumn(column, player) ||
-                    this.checkCompleteDiagonal(1, player) ||
-                    this.checkCompleteDiagonal(-1, player) ||
-
-                // move to cut line opponent
-                    this.checkCompleteRow(row, opponent) ||
-                    this.checkCompleteColumn(column, opponent) ||
-                    this.checkCompleteDiagonal(1, opponent) ||
-                    this.checkCompleteDiagonal(-1, opponent);
+                needPlayTurn =
+                    // move to do line winner
+                    checkManager.isCellCompleteLine(move, player) ||
+                    // move to cut line opponent
+                    checkManager.isCellCompleteLine(move, opponent);
             }
 
             return needPlayTurn;
@@ -104,7 +73,7 @@
 
             // IA for machine : do not discart the cell if opponent with this movement wins the line
             if (needDiscart && player.name === 'machine') {
-                needDiscart = !this.isCellUnBlockLine(move, opponent);
+                needDiscart = !checkManager.isCellUnBlockLine(move, opponent, this.matrix);
             }
 
             return needDiscart;
@@ -141,55 +110,6 @@
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
-        setWinnerCellHits: function (type, index, hits) {
-            var mainClass = '';
-
-            if (hits === this.matrix.hits) {
-                mainClass = 'ia-matrix-game';
-                this.matrix.wrapperGame.className = [mainClass, mainClass + '--match-' + type + '-' + index].join(' ');
-            }
-        },
-        checkHitsRow: function (row, player) {
-            var i, hits = 0;
-
-            for (i = 0; i < this.matrix.hits; i++) {
-                hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
-            }
-
-            this.setWinnerCellHits('row', row, hits);
-            return hits;
-        },
-        checkHitsColumn: function (column, player) {
-            var i, hits = 0;
-
-            for (i = 0; i < this.matrix.columns; i++) {
-                hits += this.matrix.grid[column][i] === player.matrix.status ? 1 : 0;
-            }
-
-            this.setWinnerCellHits('column', column, hits);
-            return hits;
-        },
-        checkHitsDiagonal: function (diagonal, player) {
-            var status = player.matrix.status,
-                matrix = this.matrix.grid,
-                hits = 0;
-
-            hits += matrix[0][1 - diagonal] === status ? 1 : 0;
-            hits += matrix[1][1] === status ? 1 : 0;
-            hits += matrix[2][1 + diagonal] === status ? 1 : 0;
-            this.setWinnerCellHits('diagonal', diagonal === 1 ? 1 : 2, hits);
-            return hits;
-        },
-        isCheckedlineToWin: function (move, player) {
-            var column = move[0],
-                row = move[1],
-                needHits = this.matrix.hits;
-
-            return this.checkHitsRow(row, player) ===  needHits ||
-                    this.checkHitsColumn(column, player) === needHits ||
-                    this.checkHitsDiagonal(1, player) === needHits ||
-                    this.checkHitsDiagonal(-1, player) === needHits;
-        },
         play: function (playerEvent, playerName) {
             var currentPlayer = _.find(this.players, { name: playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
@@ -205,7 +125,7 @@
                         var opponent = _.find(this.players, { name: currentPlayer.opponent });
 
                         // on winner stop Game
-                        if (this.isCheckedlineToWin(move, currentPlayer)) {
+                        if (checkManager.isCheckedlineToWin(move, currentPlayer, this.matrix)) {
                             // delay one instance for v8 let webkit render css
                             _.delay(_.bind(function () {
                                 w.alert(currentPlayer.shoutOfVictory);
@@ -330,4 +250,4 @@
     };
 
     d.addEventListener('DOMContentLoaded', _.bind(w.IAGame.init, w.IAGame), false);
-}(window, document, window.Matrix, window.Player));
+}(window, document, window.Matrix, window.Player, window.CheckMatrixManager));

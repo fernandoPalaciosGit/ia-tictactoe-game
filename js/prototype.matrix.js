@@ -83,4 +83,13 @@
             }
         }
     };
+
+    w.Matrix.prototype.setWinnerCellHits = function (type, index, hits) {
+        var mainClass = '';
+
+        if (hits === this.hits) {
+            mainClass = 'ia-matrix-game';
+            this.wrapperGame.className = [mainClass, mainClass + '--match-' + type + '-' + index].join(' ');
+        }
+    };
 }(window, document));
