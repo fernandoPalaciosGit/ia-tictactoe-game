@@ -111,17 +111,17 @@
             }
         },
         setWinnerCellHits: function (type, index, hits) {
-            var mainClass = 'ia-matrix-game';
+            var mainClass = '';
 
             if (hits === this.matrix.hits) {
+                mainClass = 'ia-matrix-game';
                 this.matrix.wrapperGame.className = [mainClass, mainClass + '--match-' + type + '-' + index].join(' ');
             }
         },
         checkHitsRow: function (row, player) {
-            var i = 0,
-                hits = 0;
+            var i, hits = 0;
 
-            for (; i < this.matrix.hits; i++) {
+            for (i = 0; i < this.matrix.hits; i++) {
                 hits += this.matrix.grid[i][row] === player.matrix.status ? 1 : 0;
             }
 
@@ -129,10 +129,9 @@
             return hits;
         },
         checkHitsColumn: function (column, player) {
-            var i = 0,
-                hits = 0;
+            var i, hits = 0;
 
-            for (; i < this.matrix.columns; i++) {
+            for (i = 0; i < this.matrix.columns; i++) {
                 hits += this.matrix.grid[column][i] === player.matrix.status ? 1 : 0;
             }
 

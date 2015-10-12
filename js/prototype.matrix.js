@@ -72,14 +72,13 @@
      * Set grid to initial Status
      */
     w.Matrix.prototype.clearGrid = function () {
-        var x = 0,
-            y = 0;
+        var x, y;
 
         this.currentPlayerName = null;
         this.wrapperGame.className = 'ia-matrix-game';
 
-        for (; x < this.rows; x++) {
-            for (; y < this.columns; y++) {
+        for (x = 0; x < this.rows; x++) {
+            for (y = 0; y < this.columns; y++) {
                 this.setStatusGrid(x, y, null);
             }
         }

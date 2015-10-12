@@ -48,5 +48,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('preci', ['sass:dist', 'jshint', 'jscs', 'eslint']);
+    grunt.registerTask('lint', ['jshint', 'jscs', 'eslint']);
+    grunt.registerTask('default', ['sass:dist']);
 };
