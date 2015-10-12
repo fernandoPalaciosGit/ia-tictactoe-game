@@ -50,31 +50,37 @@
         </div>
     </main>
 
-    <form id="config-game-actions" action="#">
-        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-            <label class="mdl-selectfield__label" for="playerStarter">¿Who start first?</label>
-            <select name="playerStarter" id="playerStarter" required class="mdl-selectfield__select">
-                <option value="" disabled selected></option>
-                <option value="human">yourself</option>
-                <option value="machine">the android inside machine</option>
-            </select>
+    <form id="config-game-actions" action="#" class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                <label class="mdl-selectfield__label" for="playerStarter">¿Who start first?</label>
+                <select name="playerStarter" id="playerStarter" required class="mdl-selectfield__select">
+                    <option value="" disabled selected></option>
+                    <option value="human">yourself</option>
+                    <option value="machine">the android inside machine</option>
+                </select>
+            </div>
         </div>
 
-        <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-            <label class="mdl-selectfield__label" for="playerChip">Your brand identity</label>
-            <select name="playerChip" id="playerChip" required class="mdl-selectfield__select">
-                <option value="" disabled selected></option>
-                <option value="circle">O</option>
-                <option value="cross">X</option>
-            </select>
+        <div class="mdl-cell mdl-cell--12-col">
+            <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                <label class="mdl-selectfield__label" for="playerChip">Your brand identity</label>
+                <select name="playerChip" id="playerChip" required class="mdl-selectfield__select">
+                    <option value="" disabled selected></option>
+                    <option value="circle">O</option>
+                    <option value="cross">X</option>
+                </select>
+            </div>
         </div>
 
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" name="playerGrunt" id="playerGrunt" required/>
-            <label class="mdl-textfield__label" for="playerGrunt">Your Shout of victory</label>
+        <div class="mdl-cell mdl-cell--12-col">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" name="playerGrunt" id="playerGrunt" required/>
+                <label class="mdl-textfield__label" for="playerGrunt">Your Shout of victory</label>
+            </div>
         </div>
 
-        <div>
+        <div class="mdl-cell mdl-cell--12-col">
             <button class="js-submit-config-game mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                 Init Game
             </button>
