@@ -242,8 +242,8 @@
                 }, this), false);
             }, this));
         },
-        initGame: function () {
-            var domForm = w.IAGame.formConfigGame,
+        initGame: function (ev) {
+            var domForm = this.formConfigGame,
                 playerStarter = domForm.playerStarter.options[domForm.playerStarter.selectedIndex],
                 playerChip = domForm.playerChip.options[domForm.playerChip.selectedIndex],
                 playerGrunt = domForm.playerGrunt,
@@ -254,8 +254,17 @@
                 },
                 starterPlayer = _.find(this.players, { name: selectedConfig.playerName });
 
-            this.initGameAssets(selectedConfig);
-            this.resetGame(starterPlayer);
+            ev.preventDefault();
+
+            if (this.formConfigGame.checkValidity()) {
+                domForm.classList.add('hide-pannel');
+                this.domWrapperGame.classList.remove('hide-pannel');
+                _.map(d.querySelectorAll('[data-toggle-info-element]'), function (link) {
+                    link.dataset.toggleInfoElement = 'ia-matrix-wrapper';
+                });
+                this.initGameAssets(selectedConfig);
+                this.resetGame(starterPlayer);
+            }
         },
         init: function () {
             // initalize informative pannels
@@ -283,15 +292,9 @@
             });
 
             // start game after choose form options game
-            w.IAGame.formConfigGame.addEventListener('submit', function (evForm) {
-                evForm.preventDefault();
-                this.classList.add('hide-pannel');
-                w.IAGame.domWrapperGame.classList.remove('hide-pannel');
-                _.map(d.querySelectorAll('[data-toggle-info-element]'), function (link) {
-                    link.dataset.toggleInfoElement = 'ia-matrix-wrapper';
-                });
-                w.IAGame.initGame();
-            }, false);
+            w.IAGame.formConfigGame
+                .querySelector('.js-submit-config-game')
+                .addEventListener('click', _.bind(w.IAGame.initGame, w.IAGame), false);
         }
     };
 

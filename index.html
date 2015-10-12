@@ -65,12 +65,16 @@
                 <option value="cross">X</option>
             </select>
         </p>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" name="playerGrunt" id="playerGrunt" required/>
+            <label class="mdl-textfield__label" for="playerGrunt">Your Shout of victory</label>
+        </div>
+
         <p>
-            <label for="playerGrunt">Your Shout of victory</label>
-            <input type="text" name="playerGrunt" id="playerGrunt" required>
-        </p>
-        <p>
-            <input type="submit" value="Init Game"/>
+            <button class="js-submit-config-game mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                Init Game
+            </button>
         </p>
     </form>
 
