@@ -1,4 +1,4 @@
-// jshint maxparams: 6
+// jshint maxparams: 6, maxcomplexity: 9
 (function (w, d, Matrix, Player) {
     'use strict';
 
@@ -43,13 +43,6 @@
 
             return [cellX, cellY];
         },
-        // play on aviable last 3 turn player
-        isAviableTurn: function (move, player) {
-            return !_.isUndefined(player) &&
-                    player.countTurn < 3 &&
-                    this.matrix.isEmptyTurn.apply(this.matrix, move) &&
-                    !_.isEqual(move, player.lastMove);
-        },
         // check with this movement if añy line is going to empty for opponent winner
         isCellUnBlockLine: function (move, player) {
             var column = move[0],
@@ -64,16 +57,54 @@
                 (isMoveOnDiagonal([0, 0], [2, 2]) && this.checkHitsDiagonal(1, player) === needHits) ||
                 (isMoveOnDiagonal([0, 2], [2, 0]) && this.checkHitsDiagonal(-1, player) === needHits);
         },
-        // last 3 player turn, discart one turn
+        checkCompleteRow: function (/*row, player*/) {
+            return true;
+        },
+        checkCompleteColumn: function (/*column, player*/) {
+            return true;
+        },
+        checkCompleteDiagonal: function (/*diagonal, player*/) {
+            return true;
+        },
+        // MOVEMENT : play turn
+        isAviableTurn: function (move, player) {
+            var opponent = _.find(this.players, { name: player.opponent }),
+                column = move[0],
+                row = move[1],
+                needPlayTurn =
+                    !_.isUndefined(player) &&
+                    player.countTurn < 3 &&
+                    this.matrix.isEmptyTurn.apply(this.matrix, move) &&
+                    !_.isEqual(move, player.lastMove);
+
+            // IA machine : check best oportunity for win
+            if (needPlayTurn && player.name === 'machine' && player.countTurn > 1) {
+                // move to do line winner
+                needPlayTurn = this.checkCompleteRow(row, player) ||
+                    this.checkCompleteColumn(column, player) ||
+                    this.checkCompleteDiagonal(1, player) ||
+                    this.checkCompleteDiagonal(-1, player) ||
+
+                // move to cut line opponent
+                    this.checkCompleteRow(row, opponent) ||
+                    this.checkCompleteColumn(column, opponent) ||
+                    this.checkCompleteDiagonal(1, opponent) ||
+                    this.checkCompleteDiagonal(-1, opponent);
+            }
+
+            return needPlayTurn;
+        },
+        // MOVEMENT : discart one turn
         isNeedDiscartTurn: function (move, player) {
-            var needDiscart =
+            var opponent = _.find(this.players, { name: player.opponent }),
+                needDiscart =
                     !_.isUndefined(player) &&
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
 
-            // IA for machine : do not discart the cell if oponnet with this movement wins the line
+            // IA for machine : do not discart the cell if opponent with this movement wins the line
             if (needDiscart && player.name === 'machine') {
-                needDiscart = !this.isCellUnBlockLine(move, _.find(this.players, { name: player.opponent }));
+                needDiscart = !this.isCellUnBlockLine(move, opponent);
             }
 
             return needDiscart;
@@ -170,8 +201,8 @@
                 currentPlayer.setPlayerMove(move, +1);
                 this.setBoardOnAviableTurn(move, currentPlayer)
                     .then(_.bind(function () {
-                        // change player to oponent
-                        var oponentName = _.find(this.players, { name: currentPlayer.opponent });
+                        // change player to opponent
+                        var opponent = _.find(this.players, { name: currentPlayer.opponent });
 
                         // on winner stop Game
                         if (this.isCheckedlineToWin(move, currentPlayer)) {
@@ -179,10 +210,10 @@
                             _.delay(_.bind(function () {
                                 w.alert(currentPlayer.shoutOfVictory);
                                 currentPlayer.countWinner++;
-                                this.resetGame(oponentName);
+                                this.resetGame(opponent);
                             }, this), 10);
 
-                        // the only time the next (oponent) player play
+                        // the only time the next (opponent) player play
                         } else {
                             isPlayedBox.resolve(true);
                         }
