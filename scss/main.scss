@@ -5,8 +5,14 @@
     display: none !important;
 }
 
-.mdl-layout__header {
-    z-index: $above-z-index;
+.ia-header-wrapper {
+    .mdl-layout__header {
+        z-index: $above-z-index;
+    }
+
+    .mdl-navigation__link {
+        line-height: 0;
+    }
 }
 
 .mdl-mini-footer {
