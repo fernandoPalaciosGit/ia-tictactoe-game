@@ -13,6 +13,12 @@
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
         domWrapperRules: d.querySelector('.demo-card-image'),
         formConfigGame: d.getElementById('config-game-actions'),
+        triggerPlayTurn: function (ev, name, move) {
+            var dataPlay = { playerEvent: ev, playerName: name, preselectedMove: move },
+                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
+
+            w.dispatchEvent(playTurn);
+        },
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -24,7 +30,7 @@
             this.matrix.currentPlayerName = startPlayer.name;
 
             if (startPlayer.name === 'machine') {
-                this.play(null, 'machine');
+                this.triggerPlayTurn(null, 'machine');
             }
         },
         // select random movement for machine
@@ -54,11 +60,10 @@
 
             // IA machine : check best oportunity for win
             if (needPlayTurn && player.name === 'machine' && player.countTurn > 1) {
-                needPlayTurn =
-                    // move to do line winner
-                    checkManager.isCellCompleteLine(move, player) ||
-                    // move to cut line opponent
-                    checkManager.isCellCompleteLine(move, opponent);
+                // move to do line winner
+                checkManager.completeLine(player, this.matrix) ||
+                // move to cut line opponent
+                checkManager.completeLine(opponent, this.matrix);
             }
 
             return needPlayTurn;
@@ -103,18 +108,18 @@
                 _.delay(_.bind(function () {
                     this.matrix.setStatusGrid(move[0], move[1], null);
                     // machine needs to autoplay game when discart turn
-                    this.play(null, 'machine');
+                    this.triggerPlayTurn(null, 'machine');
                 }, this), 500);
 
             } else {
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
-        play: function (playerEvent, playerName) {
-            var currentPlayer = _.find(this.players, { name: playerName }),
+        play: function (evPlay) {
+            var data = evPlay.detail,
+                currentPlayer = _.find(this.players, { name: data.playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
-                move = currentPlayer.getMove.call(this, playerEvent),
-                isPlayedBox = Promise.defer();
+                move = !_.isUndefined(data.preselectedMove) ? data.preselectedMove : currentPlayer.getMove.call(this, data.playerEvent);
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
@@ -134,8 +139,8 @@
                             }, this), 10);
 
                         // the only time the next (opponent) player play
-                        } else {
-                            isPlayedBox.resolve(true);
+                        } else if (opponent.name === 'machine') {
+                            this.triggerPlayTurn(null, 'machine');
                         }
                     }, this));
 
@@ -143,14 +148,11 @@
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
                 currentPlayer.setPlayerMove(move, -1);
                 this.setBoardOnDiscartTurn(move, currentPlayer);
-                isPlayedBox.resolve(false);
 
             // autoplay when machine turn do not play/discart corrent box
-            } else if (playerName === 'machine')  {
-                this.play(null, 'machine');
+            } else if (data.playerName === 'machine')  {
+                this.triggerPlayTurn(null, 'machine');
             }
-
-            return isPlayedBox.promise;
         },
         // initialize configuration game parameters
         initGameAssets: function (humanConfig) {
@@ -183,13 +185,9 @@
 
             // initialize game interaction
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
+                // TODO : reformat
                 cell.addEventListener('click', _.bind(function (evClick) {
-                    // first play onclick human, if box isplayed then play machine
-                    this.play(evClick, 'human')
-                        .then(_.bind(function (isPlayedTurn) {
-                            isPlayedTurn && this.play(null, 'machine');
-                        }, this));
-
+                    this.triggerPlayTurn(evClick, 'human');
                 }, this), false);
             }, this));
         },
@@ -243,9 +241,12 @@
             });
 
             // start game after choose form options game
-            w.IAGame.formConfigGame
+            this.formConfigGame
                 .querySelector('.js-submit-config-game')
-                .addEventListener('click', _.bind(w.IAGame.initGame, w.IAGame), false);
+                .addEventListener('click', _.bind(this.initGame, this), false);
+
+            // logic play game
+            w.addEventListener('playTurn', _.bind(this.play, this));
         }
     };
 

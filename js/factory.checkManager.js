@@ -1,14 +1,19 @@
-window.CheckMatrixManager = ( function () {
+window.CheckMatrixManager = ( function (w) {
     'use strict';
-    // check with this movement if añy line is going to empty for opponent winner
-    var _isCompleteRow = function (/*row, player*/) {
-            return true;
+    var _triggerPlayTurn = function (ev, name, move) {
+            var dataPlay = { playerEvent: ev, playerName: name, preselectedMove: move },
+                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
+
+            w.dispatchEvent(playTurn);
         },
-        _isCompleteColumn = function (/*column, player*/) {
-            return true;
+        _completeRow = function (/*row, player, matrix*/) {
+            //_triggerPlayTurn();
         },
-        _isCompleteDiagonal = function (/*diagonal, player*/) {
-            return true;
+        _completeColumn = function (/*column, player, matrix*/) {
+            //_triggerPlayTurn();
+        },
+        _completeDiagonal = function (/*diagonal, player, matrix*/) {
+            //_triggerPlayTurn();
         },
         _isHitsRow = function (row, player, matrix) {
             var i, hits = 0;
@@ -41,6 +46,7 @@ window.CheckMatrixManager = ( function () {
             matrix.setWinnerCellHits('diagonal', diagonal === 1 ? 1 : 2, hits);
             return hits;
         },
+        // check with this movement if a line is going to empty for opponent winner
         _isCellUnBlockLine = function (move, player, matrix) {
             var column = move[0],
                 row = move[1],
@@ -54,14 +60,11 @@ window.CheckMatrixManager = ( function () {
                 (isMoveOnDiagonal([0, 0], [2, 2]) && _isHitsDiagonal(1, player, matrix) === needHits) ||
                 (isMoveOnDiagonal([0, 2], [2, 0]) && _isHitsDiagonal(-1, player, matrix) === needHits);
         },
-        _isCellCompleteLine = function (move, player) {
-            var column = move[0],
-                row = move[1];
-
-            return _isCompleteRow(row, player) ||
-                _isCompleteColumn(column, player) ||
-                _isCompleteDiagonal(1, player) ||
-                _isCompleteDiagonal(-1, player);
+        // move to aviable cell to do a line
+        _completeCellToLine = function (player, matrix) {
+            _.map(_.range(matrix.rows) , _completeRow.bind(this, player, matrix));
+            _.map(_.range(matrix.columns), _completeColumn.bind(this, player, matrix));
+            _.map([1, -1] , _completeDiagonal.bind(this, player, matrix));
         },
         _isCheckedlineToWin = function (move, player, matrix) {
             var column = move[0],
@@ -76,7 +79,7 @@ window.CheckMatrixManager = ( function () {
 
     return {
         isCellUnBlockLine : _isCellUnBlockLine,
-        isCellCompleteLine : _isCellCompleteLine,
+        completeLine : _completeCellToLine,
         isCheckedlineToWin : _isCheckedlineToWin
     };
-}());
+}(window));
