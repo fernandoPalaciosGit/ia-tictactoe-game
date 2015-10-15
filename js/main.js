@@ -1,11 +1,11 @@
-// jshint maxparams: 5
-(function (w, d, Matrix, Player, checkManager) {
+// jshint maxparams: 6
+(function (w, d, ticTacToeUtils, Matrix, Player, checkManager) {
     'use strict';
 
     w.IAGame = {
         matrix: new Matrix(3, 3, 3, 'ia-matrix-game'),
         players: {
-            nando: new Player('human', 'machine', 2),
+            guybrush: new Player('human', 'machine', 2),
             android: new Player('machine', 'human', 1)
         },
         domWaitingMachine: d.querySelector('#waiting-game'),
@@ -13,12 +13,6 @@
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
         domWrapperRules: d.querySelector('.demo-card-image'),
         formConfigGame: d.getElementById('config-game-actions'),
-        triggerPlayTurn: function (ev, name, move) {
-            var dataPlay = { playerEvent: ev, playerName: name, preselectedMove: move },
-                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
-
-            w.dispatchEvent(playTurn);
-        },
         resetGame: function (startPlayer) {
             var players = this.players;
 
@@ -30,7 +24,7 @@
             this.matrix.currentPlayerName = startPlayer.name;
 
             if (startPlayer.name === 'machine') {
-                this.triggerPlayTurn(null, 'machine');
+                ticTacToeUtils.triggerPlayTurn('machine');
             }
         },
         // select random movement for machine
@@ -108,7 +102,7 @@
                 _.delay(_.bind(function () {
                     this.matrix.setStatusGrid(move[0], move[1], null);
                     // machine needs to autoplay game when discart turn
-                    this.triggerPlayTurn(null, 'machine');
+                    ticTacToeUtils.triggerPlayTurn('machine');
                 }, this), 500);
 
             } else {
@@ -119,7 +113,8 @@
             var data = evPlay.detail,
                 currentPlayer = _.find(this.players, { name: data.playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
-                move = !_.isUndefined(data.preselectedMove) ? data.preselectedMove : currentPlayer.getMove.call(this, data.playerEvent);
+                move = !_.isNull(data.preselectedMove) ?
+                        data.preselectedMove : currentPlayer.getMove.call(this, data.playerEvent);
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
@@ -140,7 +135,7 @@
 
                         // the only time the next (opponent) player play
                         } else if (opponent.name === 'machine') {
-                            this.triggerPlayTurn(null, 'machine');
+                            ticTacToeUtils.triggerPlayTurn('machine');
                         }
                     }, this));
 
@@ -151,12 +146,12 @@
 
             // autoplay when machine turn do not play/discart corrent box
             } else if (data.playerName === 'machine')  {
-                this.triggerPlayTurn(null, 'machine');
+                ticTacToeUtils.triggerPlayTurn('machine');
             }
         },
         // initialize configuration game parameters
         initGameAssets: function (humanConfig) {
-            var human = this.players.nando,
+            var human = this.players.guybrush,
                 machine = this.players.android,
                 chips = ['circle', 'cross'],
                 gameConfig = {
@@ -185,10 +180,7 @@
 
             // initialize game interaction
             _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
-                // TODO : reformat
-                cell.addEventListener('click', _.bind(function (evClick) {
-                    this.triggerPlayTurn(evClick, 'human');
-                }, this), false);
+                cell.addEventListener('click', _.bind(ticTacToeUtils.triggerPlayTurn, this, 'human'), false);
             }, this));
         },
         initGame: function (ev) {
@@ -251,4 +243,4 @@
     };
 
     d.addEventListener('DOMContentLoaded', _.bind(w.IAGame.init, w.IAGame), false);
-}(window, document, window.Matrix, window.Player, window.CheckMatrixManager));
+}(window, document, window.TicTacToeUtils, window.Matrix, window.Player, window.CheckMatrixManager));

@@ -1,19 +1,13 @@
-window.CheckMatrixManager = ( function (w) {
+window.CheckMatrixManager = ( function () {
     'use strict';
-    var _triggerPlayTurn = function (ev, name, move) {
-            var dataPlay = { playerEvent: ev, playerName: name, preselectedMove: move },
-                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
-
-            w.dispatchEvent(playTurn);
-        },
-        _completeRow = function (/*row, player, matrix*/) {
-            //_triggerPlayTurn();
+    var _completeRow = function (/*row, player, matrix*/) {
+            //ticTacToeUtils.triggerPlayTurn('machine', move);
         },
         _completeColumn = function (/*column, player, matrix*/) {
-            //_triggerPlayTurn();
+            //ticTacToeUtils.triggerPlayTurn('machine', move);
         },
         _completeDiagonal = function (/*diagonal, player, matrix*/) {
-            //_triggerPlayTurn();
+            //ticTacToeUtils.triggerPlayTurn('machine', move);
         },
         _isHitsRow = function (row, player, matrix) {
             var i, hits = 0;
@@ -62,9 +56,9 @@ window.CheckMatrixManager = ( function (w) {
         },
         // move to aviable cell to do a line
         _completeCellToLine = function (player, matrix) {
-            _.map(_.range(matrix.rows) , _completeRow.bind(this, player, matrix));
-            _.map(_.range(matrix.columns), _completeColumn.bind(this, player, matrix));
-            _.map([1, -1] , _completeDiagonal.bind(this, player, matrix));
+            _.range(matrix.rows).every(_completeRow.bind(this, player, matrix));
+            _.range(matrix.columns).every(_completeColumn.bind(this, player, matrix));
+            _.range([1, -1]).every(_completeDiagonal.bind(this, player, matrix));
         },
         _isCheckedlineToWin = function (move, player, matrix) {
             var column = move[0],
@@ -82,4 +76,4 @@ window.CheckMatrixManager = ( function (w) {
         completeLine : _completeCellToLine,
         isCheckedlineToWin : _isCheckedlineToWin
     };
-}(window));
+}());
