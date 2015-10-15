@@ -1,14 +1,21 @@
-window.CheckMatrixManager = ( function () {
+window.CheckMatrixManager = ( function (ticTacToeUtils) {
     'use strict';
-    var _completeRow = function (/*row, player, matrix*/) {
-            //ticTacToeUtils.triggerPlayTurn('machine', move);
+    /**
+     * @namespace {Object} StatusComplete
+     * @this {Object} this.player - @reference window.Player
+     * @this {Object} this.matrix - @reference window.Matrix
+     * @param {Number} row - row index line into matrix
+     * */
+    var _completeRow = function (row) {
+            var moveToComplete = null,
+                player = this.player,
+                matrix = this.matrix;
+
+
+            !_.isNull(moveToComplete) && ticTacToeUtils.triggerPlayTurn('machine', moveToComplete);
         },
-        _completeColumn = function (/*column, player, matrix*/) {
-            //ticTacToeUtils.triggerPlayTurn('machine', move);
-        },
-        _completeDiagonal = function (/*diagonal, player, matrix*/) {
-            //ticTacToeUtils.triggerPlayTurn('machine', move);
-        },
+        _completeColumn = function () {},
+        _completeDiagonal = function () {},
         _isHitsRow = function (row, player, matrix) {
             var i, hits = 0;
 
@@ -56,9 +63,11 @@ window.CheckMatrixManager = ( function () {
         },
         // move to aviable cell to do a line
         _completeCellToLine = function (player, matrix) {
-            _.range(matrix.rows).every(_completeRow.bind(this, player, matrix));
-            _.range(matrix.columns).every(_completeColumn.bind(this, player, matrix));
-            _.range([1, -1]).every(_completeDiagonal.bind(this, player, matrix));
+            var StatusComplete = { player: player, matrix: matrix };
+
+            _.forEach(_.range(matrix.rows), _completeRow, StatusComplete);
+            _.forEach(_.range(matrix.columns), _completeColumn, StatusComplete);
+            _.forEach([1, -1], _completeDiagonal, StatusComplete);
         },
         _isCheckedlineToWin = function (move, player, matrix) {
             var column = move[0],
@@ -76,4 +85,4 @@ window.CheckMatrixManager = ( function () {
         completeLine : _completeCellToLine,
         isCheckedlineToWin : _isCheckedlineToWin
     };
-}());
+}(window.TicTacToeUtils));

@@ -53,9 +53,9 @@
                     !_.isEqual(move, player.lastMove);
 
             // IA machine : check best oportunity for win
-            if (needPlayTurn && player.name === 'machine' && player.countTurn > 1) {
+            if (needPlayTurn && player.name === 'machine' && opponent.countTurn > 1) {
                 // move to do line winner
-                checkManager.completeLine(player, this.matrix) ||
+                checkManager.completeLine(player, this.matrix);
                 // move to cut line opponent
                 checkManager.completeLine(opponent, this.matrix);
             }
