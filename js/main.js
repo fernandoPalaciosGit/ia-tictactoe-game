@@ -55,7 +55,7 @@
             // IA machine : check best oportunity for win
             if (needPlayTurn && player.name === 'machine' && opponent.countTurn > 1) {
                 // move to do line winner
-                checkManager.completeLine(player, this.matrix);
+                checkManager.completeLine(player, this.matrix) ||
                 // move to cut line opponent
                 checkManager.completeLine(opponent, this.matrix);
             }
@@ -109,40 +109,53 @@
                 this.matrix.setStatusGrid(move[0], move[1], null);
             }
         },
+        playMovementTurn: function (evPlay) {
+            var data = evPlay.detail,
+                currentPlayer = _.find(this.players, { name: data.playerName }),
+                move = data.preselectedMove;
+
+            currentPlayer.setPlayerMove(move, +1);
+            this.setBoardOnAviableTurn(move, currentPlayer)
+                .then(_.bind(function () {
+                    // change player to opponent
+                    var opponent = _.find(this.players, { name: currentPlayer.opponent });
+
+                    // on winner stop Game
+                    if (checkManager.isCheckedlineToWin(move, currentPlayer, this.matrix)) {
+                        // delay one instance for v8 let webkit render css
+                        _.delay(_.bind(function () {
+                            w.alert(currentPlayer.shoutOfVictory);
+                            currentPlayer.countWinner++;
+                            this.resetGame(opponent);
+                        }, this), 100);
+
+                        // the only time the next (opponent) player play
+                    } else if (opponent.name === 'machine') {
+                        ticTacToeUtils.triggerPlayTurn('machine');
+                    }
+                }, this));
+        },
+        playDiscartTurn: function (evPlay) {
+            var data = evPlay.detail,
+                currentPlayer = _.find(this.players, { name: data.playerName }),
+                move = data.preselectedMove;
+
+            currentPlayer.setPlayerMove(move, -1);
+            this.setBoardOnDiscartTurn(move, currentPlayer);
+        },
         play: function (evPlay) {
             var data = evPlay.detail,
                 currentPlayer = _.find(this.players, { name: data.playerName }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
-                move = !_.isNull(data.preselectedMove) ?
-                        data.preselectedMove : currentPlayer.getMove.call(this, data.playerEvent);
+                move = currentPlayer.getMove.call(this, data.playerEvent);
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
-                currentPlayer.setPlayerMove(move, +1);
-                this.setBoardOnAviableTurn(move, currentPlayer)
-                    .then(_.bind(function () {
-                        // change player to opponent
-                        var opponent = _.find(this.players, { name: currentPlayer.opponent });
-
-                        // on winner stop Game
-                        if (checkManager.isCheckedlineToWin(move, currentPlayer, this.matrix)) {
-                            // delay one instance for v8 let webkit render css
-                            _.delay(_.bind(function () {
-                                w.alert(currentPlayer.shoutOfVictory);
-                                currentPlayer.countWinner++;
-                                this.resetGame(opponent);
-                            }, this), 10);
-
-                        // the only time the next (opponent) player play
-                        } else if (opponent.name === 'machine') {
-                            ticTacToeUtils.triggerPlayTurn('machine');
-                        }
-                    }, this));
+                ticTacToeUtils.triggerCompleteTurn(data.playerName, move);
 
             // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
-                currentPlayer.setPlayerMove(move, -1);
-                this.setBoardOnDiscartTurn(move, currentPlayer);
+                ticTacToeUtils.triggerDiscartTurn(data.playerName, move);
 
             // autoplay when machine turn do not play/discart corrent box
             } else if (data.playerName === 'machine')  {
@@ -183,7 +196,7 @@
                 cell.addEventListener('click', _.bind(ticTacToeUtils.triggerPlayTurn, this, 'human'), false);
             }, this));
         },
-        initGame: function (ev) {
+        initGameSettings: function (ev) {
             var domForm = this.formConfigGame,
                 playerStarter = domForm.playerStarter.options[domForm.playerStarter.selectedIndex],
                 playerChip = domForm.playerChip.options[domForm.playerChip.selectedIndex],
@@ -207,7 +220,7 @@
                 this.resetGame(starterPlayer);
             }
         },
-        init: function () {
+        initGameDomElements: function () {
             // initalize informative pannels
             _.map(this.domLinksRules, function (link) {
                 link.addEventListener('click', _.bind(function (evClick) {
@@ -231,14 +244,17 @@
             this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
                 this.MaterialProgress.setProgress(45);
             });
-
+        },
+        init: function () {
+            this.initGameDomElements();
             // start game after choose form options game
             this.formConfigGame
                 .querySelector('.js-submit-config-game')
-                .addEventListener('click', _.bind(this.initGame, this), false);
-
-            // logic play game
-            w.addEventListener('playTurn', _.bind(this.play, this));
+                .addEventListener('click', _.bind(this.initGameSettings, this), false);
+            // Public Events for play game
+            w.addEventListener('playTurn', _.bind(this.play, this), false);
+            w.addEventListener('completeTurn', _.bind(this.playMovementTurn, this), false);
+            w.addEventListener('discartTurn', _.bind(this.playDiscartTurn, this), false);
         }
     };
 

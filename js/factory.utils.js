@@ -6,18 +6,37 @@ window.TicTacToeUtils = ( function (w) {
 
             return !_.isUndefined(Ev.currentTarget) ? Ev : null;
         },
-        _triggerPlayTurn = function (name, move) {
-        var dataPlay = {
+        _triggerCompleteTurn = function (name, move) {
+            var dataPlay = {
+                    playerName: _.isString(name) ? name : null,
+                    preselectedMove: _.isArray(move) ? move : null
+                },
+                playTurn = new CustomEvent('completeTurn', { detail: dataPlay });
+
+            w.dispatchEvent(playTurn);
+        },
+        _triggerDiscartTurn = function (name, move) {
+            var dataPlay = {
+                    playerName: _.isString(name) ? name : null,
+                    preselectedMove: _.isArray(move) ? move : null
+                },
+                playTurn = new CustomEvent('discartTurn', { detail: dataPlay });
+
+            w.dispatchEvent(playTurn);
+        },
+        _triggerPlayTurn = function (name) {
+            var dataPlay = {
                 playerEvent: _getEventHandler(arguments),
-                playerName: _.isString(name) ? name : null,
-                preselectedMove: _.isArray(move) ? move : null
+                playerName: _.isString(name) ? name : null
             },
             playTurn = new CustomEvent('playTurn', { detail: dataPlay });
 
-        w.dispatchEvent(playTurn);
-    };
+            w.dispatchEvent(playTurn);
+        };
 
     return {
-        triggerPlayTurn : _triggerPlayTurn
+        triggerPlayTurn : _triggerPlayTurn,
+        triggerCompleteTurn : _triggerCompleteTurn,
+        triggerDiscartTurn : _triggerDiscartTurn
     };
 }(window));
