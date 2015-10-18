@@ -45,22 +45,10 @@
         },
         // MOVEMENT : play turn
         isAviableTurn: function (move, player) {
-            var opponent = _.find(this.players, { name: player.opponent }),
-                needPlayTurn =
-                    !_.isUndefined(player) &&
+            return !_.isUndefined(player) &&
                     player.countTurn < 3 &&
                     this.matrix.isEmptyTurn.apply(this.matrix, move) &&
                     !_.isEqual(move, player.lastMove);
-
-            // IA machine : check best oportunity for win
-            if (needPlayTurn && player.name === 'machine' && opponent.countTurn > 1) {
-                // move to do line winner
-                checkManager.completeLine(player, this.matrix) ||
-                // move to cut line opponent
-                checkManager.completeLine(opponent, this.matrix);
-            }
-
-            return needPlayTurn;
         },
         // MOVEMENT : discart one turn
         isNeedDiscartTurn: function (move, player) {
@@ -145,17 +133,35 @@
         },
         play: function (evPlay) {
             var data = evPlay.detail,
+                completedMachineMove = null,
                 currentPlayer = _.find(this.players, { name: data.playerName }),
+                currentOponent = _.find(this.players, { name: currentPlayer.opponent }),
                 /** @type {Array} move - coords of matrix player movement @see Player.setMove */
                 move = currentPlayer.getMove.call(this, data.playerEvent);
 
             // play a Box
             if (this.isAviableTurn(move, currentPlayer)) {
-                ticTacToeUtils.triggerCompleteTurn(data.playerName, move);
+                // IA machine : check best oportunity for win
+                if (currentPlayer.name === 'machine' && currentOponent.countTurn > 1) {
+                    completedMachineMove =
+                        checkManager.getMoveTocompleteLine(currentPlayer, this.matrix) ||
+                        checkManager.getMoveTocompleteLine(currentOponent, this.matrix);
+                }
+
+                move = !_.isArray(completedMachineMove) ? move : completedMachineMove;
+                ticTacToeUtils.triggerCompleteTurn(currentPlayer.name, move);
 
             // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
-                ticTacToeUtils.triggerDiscartTurn(data.playerName, move);
+                // IA machine : discart movement if not completed line
+                if (currentPlayer.name === 'machine') {
+                    completedMachineMove =
+                        checkManager.getMoveTocompleteLine(currentPlayer, this.matrix, false) ||
+                        checkManager.getMoveTocompleteLine(currentOponent, this.matrix, false);
+                }
+
+                move = !_.isArray(completedMachineMove) ? move : completedMachineMove;
+                ticTacToeUtils.triggerDiscartTurn(currentPlayer.name, move);
 
             // autoplay when machine turn do not play/discart corrent box
             } else if (data.playerName === 'machine')  {

@@ -1,4 +1,4 @@
-window.CheckMatrixManager = ( function (ticTacToeUtils) {
+window.CheckMatrixManager = ( function () {
     'use strict';
 
     var getCellLineEmpty = function (matrix, column, row) {
@@ -65,23 +65,24 @@ window.CheckMatrixManager = ( function (ticTacToeUtils) {
          * @this {Object} this.matrix - @reference window.Matrix
          * @param {Number, Number, Number} row column diagonal- line index into matrix
          * */
-        completeRow = function (row) {
+         completeRow = function (row, isTodiscart) {
             var player = this.player,
                 matrix = this.matrix,
-                hasCompleted = false,
+                hitsToComplete = !isTodiscart ? matrix.hits - 1 : 1,
                 moveToComplete = getCellLineEmpty(matrix, null, row);
 
-            if (countHitsRow(row, player, matrix) === 2 && !_.isNull(moveToComplete)) {
-                hasCompleted = true;
-                console.info(moveToComplete);
-                //ticTacToeUtils.triggerCompleteTurn('machine', moveToComplete);
-            }
+            return (!_.isNull(moveToComplete) && countHitsRow(row, player, matrix) === hitsToComplete) ?
+                moveToComplete : null;
+        },
+        completeColumn = function (column, isTodiscart) {
+            var player = this.player,
+                matrix = this.matrix,
+                hitsToComplete = !isTodiscart ? matrix.hits - 1 : 1,
+                moveToComplete = getCellLineEmpty(matrix, column, null);
 
-            return hasCompleted;
-        },/*
-        completeColumn = function (column) {},
-        completeDiagonal = function (diagonal) {},*/
-
+            return (!_.isNull(moveToComplete) && countHitsColumn(column, player, matrix) === hitsToComplete) ?
+                moveToComplete : null;
+        },
         // check with this movement if a line is going to empty for opponent winner
         _isCellUnBlockLine = function (move, player, matrix) {
             var column = move[0],
@@ -97,12 +98,24 @@ window.CheckMatrixManager = ( function (ticTacToeUtils) {
                 (isMoveOnDiagonal([0, 2], [2, 0]) && countHitsDiagonal(-1, player, matrix) === needHits);
         },
         // move to aviable cell to do a line
-        _completeCellToLine = function (player, matrix) {
-            var StatusComplete = { player: player, matrix: matrix };
+        _getMoveTocompleteLine = function (player, matrix, isTodiscart) {
+            var StatusComplete = { player: player, matrix: matrix },
+                moveToComplete = null;
 
-            return !_.isEmpty(_.filter(_.range(matrix.rows), completeRow, StatusComplete))/* ||
-                !_.isEmpty(_.filter(_.range(matrix.columns), completeColumn, StatusComplete)) ||
-                _.forEach([1, -1], completeDiagonal, StatusComplete)*/;
+            _.every(_.range(matrix.rows), function (row) {
+                moveToComplete = completeRow.call(StatusComplete, row, isTodiscart);
+                return _.isNull(moveToComplete); // stop iteration until we catch a movement
+            });
+
+            if (_.isNull(moveToComplete)) {
+                _.every(_.range(matrix.columns), function (columns) {
+                    moveToComplete = completeColumn.call(StatusComplete, columns, isTodiscart);
+                    return _.isNull(moveToComplete);
+                });
+            }
+
+            // TODO : _.forEach([1, -1], completeDiagonal, StatusComplete)
+            return moveToComplete;
         },
         // check into lines player do a strike
         _isCheckedlineToWin = function (move, player, matrix) {
@@ -118,7 +131,7 @@ window.CheckMatrixManager = ( function (ticTacToeUtils) {
 
     return {
         isCellUnBlockLine : _isCellUnBlockLine,
-        completeLine : _completeCellToLine,
+        getMoveTocompleteLine : _getMoveTocompleteLine,
         isCheckedlineToWin : _isCheckedlineToWin
     };
-}(window.TicTacToeUtils));
+}());

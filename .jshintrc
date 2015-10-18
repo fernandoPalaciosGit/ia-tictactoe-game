@@ -22,7 +22,7 @@
     "bitwise": false,
     "expr": true,
     "strict": true,
-    "maxcomplexity": 5,
+    "maxcomplexity": 10,
     "maxdepth": 3,
     "maxstatements": 13,
     "maxparams": 4,
