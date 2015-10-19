@@ -26,17 +26,26 @@ window.TicTacToeUtils = ( function (w) {
         },
         _triggerPlayTurn = function (name) {
             var dataPlay = {
-                playerEvent: _getEventHandler(arguments),
-                playerName: _.isString(name) ? name : null
-            },
-            playTurn = new CustomEvent('playTurn', { detail: dataPlay });
+                    playerEvent: _getEventHandler(arguments),
+                    playerName: _.isString(name) ? name : null
+                },
+                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
 
             w.dispatchEvent(playTurn);
+        },
+        _triggerPlayWinner = function (winnerName) {
+            var dataPlay = {
+                    playerName : winnerName
+                },
+                showWinner = new CustomEvent('showWinner', { detail: dataPlay });
+
+            w.dispatchEvent(showWinner);
         };
 
     return {
         triggerPlayTurn : _triggerPlayTurn,
         triggerCompleteTurn : _triggerCompleteTurn,
-        triggerDiscartTurn : _triggerDiscartTurn
+        triggerDiscartTurn : _triggerDiscartTurn,
+        triggerPlayWinner: _triggerPlayWinner
     };
 }(window));

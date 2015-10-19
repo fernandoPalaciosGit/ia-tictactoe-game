@@ -1,6 +1,10 @@
 @import 'variables';
 @import 'mixinsAndPlaceholders';
 
+body, html {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+}
+
 .hide-pannel {
     display: none !important;
 }
@@ -39,7 +43,7 @@
         display: block;
         position: fixed;
         height: 100%;
-        background: $white-blur-bgd-color;
+        background: rgba(#fff, 0.8);
         z-index: $waiting-z-index;
     }
 
@@ -66,6 +70,11 @@
 
 #config-game-actions {
     text-align: center;
+        width: 90%;
+
+    @media screen and (min-width: $media-medium-width) {
+        width: initial;
+    }
 }
 
 .ia-matrix-game {
@@ -76,13 +85,18 @@
     &__cell-box {
         cursor: pointer;
         display: inline-block;
-        width: $matrix-box-square-size;
-        height: $matrix-box-square-size;
+        width: $matrix-box-square-size-medium;
+        height: $matrix-box-square-size-medium;
         margin: $matrix-box-separation;
         border-radius: 5px;
         border: $matrix-box-border;
         position: relative;
         @extend %transition-smooth;
+
+        @media screen and (min-width: $media-medium-width) {
+            width: $matrix-box-square-size;
+            height: $matrix-box-square-size;
+        }
     }
 
     /*CELLS BEHAVIOUR*/
@@ -123,7 +137,11 @@
                         map-get($property, top),
                         map-get($property, left)
                     );
-                    border-#{map-get($property, borderType)}-width: 12px;
+                    border-#{map-get($property, borderType)}-width: 9px;
+
+                    @media screen and (min-width: $media-medium-width) {
+                        border-#{map-get($property, borderType)}-width: 12px;
+                    }
                 }
             }
         }
@@ -138,20 +156,26 @@
         $cellA : 0#{abs($diagonal - 1)};
         $cellCenter : 11;
         $cellB : 2#{abs($diagonal + 1)};
+        $indexDiagonal: index($listDiagonal, $diagonal);
 
-        &--match-diagonal-#{index($listDiagonal, $diagonal)} {
+        &--match-diagonal-#{$indexDiagonal} {
             [data-cell-grid="#{$cellA}"]:after,
             [data-cell-grid="#{$cellCenter}"]:after,
             [data-cell-grid="#{$cellB}"]:after {
                 @include game-match-cell-status(
-                    map-get($diagonalProp, width),
-                    map-get($diagonalProp, height) * 2,
-                    -90px,
-                    map-get($diagonalProp, left)
+                    $h: map-get($diagonalProp, height) * 2,
+                    $t: -90px,
+                    $l: map-get($diagonalProp, left)
                 );
                 transform-origin: center;
                 transform: rotate(#{$diagonal * 45}deg);
-                border-#{map-get($diagonalProp, borderType)}-width: 12px;
+                border-#{map-get($diagonalProp, borderType)}-width: 9px;
+                    width: if($indexDiagonal == 1, 20%, 70%);
+
+                @media screen and (min-width: $media-medium-width) {
+                    border-#{map-get($diagonalProp, borderType)}-width: 12px;
+                    width: map-get($diagonalProp, width);
+                }
             }
         }
     }
@@ -163,6 +187,20 @@
     width: 100%;
     margin: $matrix-game-rules-top auto 0;
 
+    ul {
+        list-style-type: circle;
+    }
+
+    li {
+        line-height: 1em;
+        font-size: $matrix-game-rules-font-size;
+        margin-top: 2em;
+
+        &:first-child {
+            margin-top: $matrix-game-rules-first-margin-top;
+        }
+    }
+
     &.show--rules{
         @extend %transition-smooth;
         visibility: visible;
@@ -170,9 +208,16 @@
     }
 
     &.mdl-card {
-        width: $matrix-game-rules-width;
+        width: 90%;
         height: $matrix-game-rules-height;
-        background: url('../images/board-circle-cross.jpg') center / cover;
+        background: url('../images/board-circle-cross.jpg') no-repeat center center;
+        background-size: contain;
+
+        @media screen and (min-width: $media-medium-width) {
+            background-size: cover;
+            width: $matrix-game-rules-width;
+            height: initial;
+        }
     }
 
     & > .mdl-card__actions {
@@ -192,12 +237,18 @@
         right: 25px;
         top: -8px;
         float: right;
-        color: #DB1600;
+
+        .material-icons {
+            color: $warning-font-color;
+            font-weight: bold;
+        }
     }
 
     .mdl-card__supporting-text {
-        background-color: $white-blur-bgd-color;
+        background-color: rgba(#fff, 0.9);
         width: 100%;
         color: black;
+        padding-left: 0;
+        paddin-right: 0;
     }
  }

@@ -12,6 +12,7 @@
         domWrapperGame: d.getElementById('ia-matrix-wrapper'),
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
         domWrapperRules: d.querySelector('.demo-card-image'),
+        domFooter: d.querySelector('.mdl-mini-footer'),
         formConfigGame: d.getElementById('config-game-actions'),
         resetGame: function (startPlayer) {
             var players = this.players;
@@ -115,12 +116,7 @@
 
                     // on winner stop Game
                     if (checkManager.isCheckedlineToComplete(move, currentPlayer, this.matrix, this.matrix.hits)) {
-                        // delay one instance for v8 let webkit render css
-                        _.delay(_.bind(function () {
-                            w.alert(currentPlayer.shoutOfVictory);
-                            currentPlayer.countWinner++;
-                            this.resetGame(opponent);
-                        }, this), 100);
+                        ticTacToeUtils.triggerPlayWinner(currentPlayer.name);
 
                         // the only time the next (opponent) player play
                     } else if (opponent.name === 'machine') {
@@ -135,6 +131,17 @@
 
             currentPlayer.setPlayerMove(move, -1);
             this.setBoardOnDiscartTurn(move, currentPlayer);
+        },
+        showWinnerGame: function (evPlay) {
+            var data = evPlay.detail,
+                winnerPlayer = _.find(this.players, { name: data.playerName }),
+                looserPlayer = _.find(this.players, { name: winnerPlayer.opponent });
+
+            winnerPlayer.countWinner++;
+            _.delay(function () {
+                w.alert(winnerPlayer.shoutOfVictory); // TODO : popup victory
+                this.resetGame(looserPlayer); // TODO : onclick reset game
+            }.bind(this), 50);
         },
         getMoveTocompleteLine: function (player, oponent) {
             return checkManager.getMoveTocompleteLine(player, this.matrix) ||
@@ -236,10 +243,12 @@
 
                     if (toggleAction === 'open') {
                         toggleEl.classList.add('hide-pannel');
+                        this.domFooter.classList.add('hide-pannel');
                         this.domWrapperRules.classList.add('show--rules');
 
                     } else if (toggleAction === 'close') {
                         toggleEl.classList.remove('hide-pannel');
+                        this.domFooter.classList.remove('hide-pannel');
                         this.domWrapperRules.classList.remove('show--rules');
                     }
                 }, this), false);
@@ -260,6 +269,7 @@
             w.addEventListener('playTurn', _.bind(this.play, this), false);
             w.addEventListener('completeTurn', _.bind(this.playMovementTurn, this), false);
             w.addEventListener('discartTurn', _.bind(this.playDiscartTurn, this), false);
+            w.addEventListener('showWinner', _.bind(this.showWinnerGame, this), false);
         }
     };
 

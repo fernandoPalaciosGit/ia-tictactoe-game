@@ -1,18 +1,21 @@
-$white-blur-bgd-color: rgba(255, 255, 255, 0.8);
-$black-blur-bgd-color: rgba(0, 0, 0, 0.6);
+$media-medium-width: 400px;
+$black-blur-bgd-color: rgba(#3F51B5, 0.9);
+$warning-font-color: #DB1600;
 $waiting-z-index: 5;
 $above-z-index: 10;
 $matrix-margin-top: 50px;
 $matrix-box-square-size: 100px;
+$matrix-box-square-size-medium: 60px;
 $matrix-box-border: 1px solid #8C9EFF;
 $matrix-box-border-fill: 1px solid #536DFE;
 $matrix-box-separation: 10px;
 $matrix-game-rules-top: 25px;
 $matrix-game-rules-width: 500px;
-$matrix-game-rules-height: 450px;
+$matrix-game-rules-height: 370px;
+$matrix-game-rules-first-margin-top: 35px;
+$matrix-game-rules-font-size: 16px;
 
 // Mached winner Cells
-$game-match-cell-border: 6px solid darkred;
 $game-match-cell-border-offset: 3px;
 $game-match-cell-size: $matrix-box-square-size + (4 * $matrix-box-separation);
 $game-match-line-properties: (
