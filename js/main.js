@@ -58,9 +58,14 @@
                     player.countTurn === 3 &&
                     this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status;
 
-            // IA for machine : do not discart the cell if opponent with this movement wins the line
             if (needDiscart && player.name === 'machine') {
-                needDiscart = !checkManager.isCellUnBlockLine(move, opponent, this.matrix);
+                needDiscart =
+                    (checkManager.isCellUnBlockLine(move, opponent, this.matrix) &&
+                        _.isArray(this.getMoveTocompleteLine(player, opponent))) ||
+
+                    (!checkManager.isCellUnBlockLine(move, opponent, this.matrix) &&
+                    (!checkManager.isCheckedlineToComplete(move, player, this.matrix, 2) ||
+                    checkManager.isCheckedlineToComplete(move, opponent, this.matrix, 1)));
             }
 
             return needDiscart;
@@ -109,7 +114,7 @@
                     var opponent = _.find(this.players, { name: currentPlayer.opponent });
 
                     // on winner stop Game
-                    if (checkManager.isCheckedlineToWin(move, currentPlayer, this.matrix)) {
+                    if (checkManager.isCheckedlineToComplete(move, currentPlayer, this.matrix, this.matrix.hits)) {
                         // delay one instance for v8 let webkit render css
                         _.delay(_.bind(function () {
                             w.alert(currentPlayer.shoutOfVictory);
@@ -131,6 +136,10 @@
             currentPlayer.setPlayerMove(move, -1);
             this.setBoardOnDiscartTurn(move, currentPlayer);
         },
+        getMoveTocompleteLine: function (player, oponent) {
+            return checkManager.getMoveTocompleteLine(player, this.matrix) ||
+                checkManager.getMoveTocompleteLine(oponent, this.matrix);
+        },
         play: function (evPlay) {
             var data = evPlay.detail,
                 completedMachineMove = null,
@@ -143,9 +152,7 @@
             if (this.isAviableTurn(move, currentPlayer)) {
                 // IA machine : check best oportunity for win
                 if (currentPlayer.name === 'machine' && currentOponent.countTurn > 1) {
-                    completedMachineMove =
-                        checkManager.getMoveTocompleteLine(currentPlayer, this.matrix) ||
-                        checkManager.getMoveTocompleteLine(currentOponent, this.matrix);
+                    completedMachineMove = this.getMoveTocompleteLine(currentPlayer, currentOponent);
                 }
 
                 move = !_.isArray(completedMachineMove) ? move : completedMachineMove;
@@ -153,14 +160,6 @@
 
             // discart an own box
             } else if (this.isNeedDiscartTurn(move, currentPlayer)) {
-                // IA machine : discart movement if not completed line
-                if (currentPlayer.name === 'machine') {
-                    completedMachineMove =
-                        checkManager.getMoveTocompleteLine(currentPlayer, this.matrix, false) ||
-                        checkManager.getMoveTocompleteLine(currentOponent, this.matrix, false);
-                }
-
-                move = !_.isArray(completedMachineMove) ? move : completedMachineMove;
                 ticTacToeUtils.triggerDiscartTurn(currentPlayer.name, move);
 
             // autoplay when machine turn do not play/discart corrent box

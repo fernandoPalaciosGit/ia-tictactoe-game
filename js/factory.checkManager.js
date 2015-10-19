@@ -64,20 +64,21 @@ window.CheckMatrixManager = ( function () {
          * @this {Object} this.player - @reference window.Player
          * @this {Object} this.matrix - @reference window.Matrix
          * @param {Number, Number, Number} row column diagonal- line index into matrix
+         * @param isTodiscart
          * */
-         completeRow = function (row, isTodiscart) {
+         completeRow = function (row) {
             var player = this.player,
                 matrix = this.matrix,
-                hitsToComplete = !isTodiscart ? matrix.hits - 1 : 1,
+                hitsToComplete = matrix.hits - 1,
                 moveToComplete = getCellLineEmpty(matrix, null, row);
 
             return (!_.isNull(moveToComplete) && countHitsRow(row, player, matrix) === hitsToComplete) ?
                 moveToComplete : null;
         },
-        completeColumn = function (column, isTodiscart) {
+        completeColumn = function (column) {
             var player = this.player,
                 matrix = this.matrix,
-                hitsToComplete = !isTodiscart ? matrix.hits - 1 : 1,
+                hitsToComplete = matrix.hits - 1,
                 moveToComplete = getCellLineEmpty(matrix, column, null);
 
             return (!_.isNull(moveToComplete) && countHitsColumn(column, player, matrix) === hitsToComplete) ?
@@ -98,18 +99,18 @@ window.CheckMatrixManager = ( function () {
                 (isMoveOnDiagonal([0, 2], [2, 0]) && countHitsDiagonal(-1, player, matrix) === needHits);
         },
         // move to aviable cell to do a line
-        _getMoveTocompleteLine = function (player, matrix, isTodiscart) {
+        _getMoveTocompleteLine = function (player, matrix) {
             var StatusComplete = { player: player, matrix: matrix },
                 moveToComplete = null;
 
             _.every(_.range(matrix.rows), function (row) {
-                moveToComplete = completeRow.call(StatusComplete, row, isTodiscart);
+                moveToComplete = completeRow.call(StatusComplete, row);
                 return _.isNull(moveToComplete); // stop iteration until we catch a movement
             });
 
             if (_.isNull(moveToComplete)) {
                 _.every(_.range(matrix.columns), function (columns) {
-                    moveToComplete = completeColumn.call(StatusComplete, columns, isTodiscart);
+                    moveToComplete = completeColumn.call(StatusComplete, columns);
                     return _.isNull(moveToComplete);
                 });
             }
@@ -118,20 +119,19 @@ window.CheckMatrixManager = ( function () {
             return moveToComplete;
         },
         // check into lines player do a strike
-        _isCheckedlineToWin = function (move, player, matrix) {
+        _isCheckedlineToComplete = function (move, player, matrix, hits) {
             var column = move[0],
-                row = move[1],
-                needHits = matrix.hits;
+                row = move[1];
 
-            return countHitsRow(row, player, matrix) ===  needHits ||
-                countHitsColumn(column, player, matrix) === needHits ||
-                countHitsDiagonal(1, player, matrix) === needHits ||
-                countHitsDiagonal(-1, player, matrix) === needHits;
+            return countHitsRow(row, player, matrix) ===  hits ||
+                countHitsColumn(column, player, matrix) === hits ||
+                countHitsDiagonal(1, player, matrix) === hits ||
+                countHitsDiagonal(-1, player, matrix) === hits;
         };
 
     return {
         isCellUnBlockLine : _isCellUnBlockLine,
         getMoveTocompleteLine : _getMoveTocompleteLine,
-        isCheckedlineToWin : _isCheckedlineToWin
+        isCheckedlineToComplete : _isCheckedlineToComplete
     };
 }());
