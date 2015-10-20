@@ -2,7 +2,7 @@
 @import 'mixinsAndPlaceholders';
 
 body, html {
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-family: 'Roboto','Helvetica','Arial',sans-serif;
 }
 
 .hide-pannel {
@@ -20,15 +20,15 @@ body, html {
 }
 
 .mdl-mini-footer {
-    z-index: $above-z-index;
-    position: fixed;
     bottom: 0;
-    width: 100%;
     padding: 20px;
+    position: fixed;
+    width: 100%;
+    z-index: $above-z-index;
 
     .mdl-logo {
-        margin: 0;
         line-height: 1;
+        margin: 0;
     }
 }
 
@@ -39,11 +39,11 @@ body, html {
     -webkit-user-select: none;
 
     &:before {
-        content: "";
-        display: block;
-        position: fixed;
-        height: 100%;
         background: rgba(#fff, 0.8);
+        content: '';
+        display: block;
+        height: 100%;
+        position: fixed;
         z-index: $waiting-z-index;
     }
 
@@ -53,8 +53,8 @@ body, html {
 
     /* On active waiting behaviour*/
     &:before, #waiting-game {
-        visibility: hidden;
         opacity: 0;
+        visibility: hidden;
         width: 100%;
         @extend %transition-smooth;
     }
@@ -62,15 +62,15 @@ body, html {
     &.waiting-game--fadein {
 
         &:before, #waiting-game {
-            visibility: visible;
             opacity: 1;
+            visibility: visible;
         }
     }
 }
 
 #config-game-actions {
     text-align: center;
-        width: 90%;
+    width: 90%;
 
     @media screen and (min-width: $media-medium-width) {
         width: initial;
@@ -83,14 +83,14 @@ body, html {
 
     /*CELLS STRUCTURE*/
     &__cell-box {
+        border: $matrix-box-border;
+        border-radius: 5px;
         cursor: pointer;
         display: inline-block;
-        width: $matrix-box-square-size-medium;
         height: $matrix-box-square-size-medium;
         margin: $matrix-box-separation;
-        border-radius: 5px;
-        border: $matrix-box-border;
         position: relative;
+        width: $matrix-box-square-size-medium;
         @extend %transition-smooth;
 
         @media screen and (min-width: $media-medium-width) {
@@ -122,78 +122,22 @@ body, html {
         @extend %hover-cell;
     }
 
-    /* WINNER STATUS CELLS
-     * ia-matrix-game--match-[column|row]-[0|1|2]
-     */
-    @for $col from 0 through 2 {
-        @for $row from 0 through 2 {
-            @each $typeLine, $property in $game-match-line-properties {
-                $cell: if($typeLine == 'column', #{$col}#{$row}, #{$row}#{$col});
-
-                &--match-#{$typeLine}-#{$col} [data-cell-grid="#{$cell}"]:after {
-                    @include game-match-cell-status(
-                        map-get($property, width),
-                        map-get($property, height),
-                        map-get($property, top),
-                        map-get($property, left)
-                    );
-                    border-#{map-get($property, borderType)}-width: 9px;
-
-                    @media screen and (min-width: $media-medium-width) {
-                        border-#{map-get($property, borderType)}-width: 12px;
-                    }
-                }
-            }
-        }
-    }
-
-    /* WINNER STATUS CELLS
-     * ia-matrix-game--match-diagonal-[1|2]
-     */
-    $listDiagonal: (1, -1);
-    $diagonalProp : map-get($game-match-line-properties, column); //select column as reference diagonal properties
-    @each $diagonal in  $listDiagonal{
-        $cellA : 0#{abs($diagonal - 1)};
-        $cellCenter : 11;
-        $cellB : 2#{abs($diagonal + 1)};
-        $indexDiagonal: index($listDiagonal, $diagonal);
-
-        &--match-diagonal-#{$indexDiagonal} {
-            [data-cell-grid="#{$cellA}"]:after,
-            [data-cell-grid="#{$cellCenter}"]:after,
-            [data-cell-grid="#{$cellB}"]:after {
-                @include game-match-cell-status(
-                    $h: map-get($diagonalProp, height) * 2,
-                    $t: -90px,
-                    $l: map-get($diagonalProp, left)
-                );
-                transform-origin: center;
-                transform: rotate(#{$diagonal * 45}deg);
-                border-#{map-get($diagonalProp, borderType)}-width: 9px;
-                    width: if($indexDiagonal == 1, 20%, 70%);
-
-                @media screen and (min-width: $media-medium-width) {
-                    border-#{map-get($diagonalProp, borderType)}-width: 12px;
-                    width: map-get($diagonalProp, width);
-                }
-            }
-        }
-    }
+    @import 'statusCell';
 }
 
 .demo-card-image {
-    visibility: hidden;
-    opacity: 0;
-    width: 100%;
     margin: $matrix-game-rules-top auto 0;
+    opacity: 0;
+    visibility: hidden;
+    width: 100%;
 
     ul {
         list-style-type: circle;
     }
 
     li {
-        line-height: 1em;
         font-size: $matrix-game-rules-font-size;
+        line-height: 1em;
         margin-top: 2em;
 
         &:first-child {
@@ -203,28 +147,28 @@ body, html {
 
     &.show--rules{
         @extend %transition-smooth;
-        visibility: visible;
         opacity: 1;
+        visibility: visible;
     }
 
     &.mdl-card {
         width: 90%;
-        height: $matrix-game-rules-height;
         background: url('../images/board-circle-cross.jpg') no-repeat center center;
         background-size: contain;
+        height: $matrix-game-rules-height;
 
         @media screen and (min-width: $media-medium-width) {
             background-size: cover;
-            width: $matrix-game-rules-width;
             height: initial;
+            width: $matrix-game-rules-width;
         }
     }
 
     & > .mdl-card__actions {
+        background: $black-blur-bgd-color;
+        color: white;
         height: 52px;
         padding: 16px;
-        color: white;
-        background: $black-blur-bgd-color;
     }
 
     &__filename {
@@ -234,9 +178,9 @@ body, html {
     }
 
     .mdl-button--icon {
+        float: right;
         right: 25px;
         top: -8px;
-        float: right;
 
         .material-icons {
             color: $warning-font-color;
@@ -246,9 +190,9 @@ body, html {
 
     .mdl-card__supporting-text {
         background-color: rgba(#fff, 0.9);
-        width: 100%;
         color: black;
         padding-left: 0;
+        width: 100%;
         paddin-right: 0;
     }
  }
