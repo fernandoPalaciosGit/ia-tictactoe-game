@@ -1,7 +1,12 @@
-window.TicTacToeUtils = ( function (w) {
+window.TicTacToeUtils = ( function (w, d) {
     'use strict';
 
-    var _getEventHandler = function (arg) {
+    var createEvent = function (eventName, eventData) {
+            var utilEvent = new CustomEvent(eventName, { detail: eventData });
+
+            w.dispatchEvent(utilEvent);
+        },
+        getEventHandler = function (arg) {
             var Ev = Array.prototype.slice.call(arg, -1)[0];
 
             return !_.isUndefined(Ev.currentTarget) ? Ev : null;
@@ -10,42 +15,44 @@ window.TicTacToeUtils = ( function (w) {
             var dataPlay = {
                     playerName: _.isString(name) ? name : null,
                     preselectedMove: _.isArray(move) ? move : null
-                },
-                playTurn = new CustomEvent('completeTurn', { detail: dataPlay });
+                };
 
-            w.dispatchEvent(playTurn);
+            createEvent('completeTurn', dataPlay);
         },
         _triggerDiscartTurn = function (name, move) {
             var dataPlay = {
                     playerName: _.isString(name) ? name : null,
                     preselectedMove: _.isArray(move) ? move : null
-                },
-                playTurn = new CustomEvent('discartTurn', { detail: dataPlay });
+                };
 
-            w.dispatchEvent(playTurn);
+            createEvent('discartTurn', dataPlay);
         },
         _triggerPlayTurn = function (name) {
             var dataPlay = {
-                    playerEvent: _getEventHandler(arguments),
+                    playerEvent: getEventHandler(arguments),
                     playerName: _.isString(name) ? name : null
-                },
-                playTurn = new CustomEvent('playTurn', { detail: dataPlay });
+                };
 
-            w.dispatchEvent(playTurn);
+            createEvent('playTurn', dataPlay);
         },
         _triggerPlayWinner = function (winnerName) {
             var dataPlay = {
                     playerName : winnerName
-                },
-                showWinner = new CustomEvent('showWinner', { detail: dataPlay });
+                };
 
-            w.dispatchEvent(showWinner);
+            createEvent('showWinner', dataPlay);
+        },
+        _toogleInfoViewsByData = function (dataSelector, toggleData) {
+            _.map(d.querySelectorAll('[data-' + dataSelector + ']'), function (link) {
+                link.dataset[_.camelCase(dataSelector)] = toggleData;
+            });
         };
 
     return {
         triggerPlayTurn : _triggerPlayTurn,
         triggerCompleteTurn : _triggerCompleteTurn,
         triggerDiscartTurn : _triggerDiscartTurn,
-        triggerPlayWinner: _triggerPlayWinner
+        triggerPlayWinner: _triggerPlayWinner,
+        toogleInfoViewsByData: _toogleInfoViewsByData
     };
-}(window));
+}(window, document));

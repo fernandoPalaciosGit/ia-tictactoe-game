@@ -63,6 +63,11 @@
         this.countTurn = 0;
     };
 
+    w.Player.prototype.resetPlayerGame = function () {
+        this.resetPlayerStatus();
+        this.countWinner = 0;
+    };
+
     w.Player.prototype.getClass = function (coordX, coordY) {
         return [this.cellClass, this.cellHook + coordX + coordY, this.matrix.activeClass].join(' ');
     };

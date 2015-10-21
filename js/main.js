@@ -11,20 +11,36 @@
         domWaitingMachine: d.querySelector('#waiting-game'),
         domWrapperGame: d.getElementById('ia-matrix-wrapper'),
         domLinksRules: d.querySelectorAll('.js-show-panel-rules'),
-        domWrapperRules: d.querySelector('.demo-card-image'),
-        domFooter: d.querySelector('.mdl-mini-footer'),
+        domWrapperRules: d.querySelector('.ia-rules-card'),
+        domWrapperWinner: d.querySelector('.ia-winner-card'),
+        domActionRefreshGame: d.querySelectorAll('.ia-refresh-game'),
+        domFooter: d.querySelector('.ia-main-footer'),
         formConfigGame: d.getElementById('config-game-actions'),
-        resetGame: function (startPlayer) {
-            var players = this.players;
+        continueGame: function (ev) {
+            var playerName = ev.currentTarget.dataset.refreshGamer;
 
-            _.map(players, function (player) {
+            ev.preventDefault();
+            _.map(this.players, function (player) {
                 player.resetPlayerStatus();
             });
+            this.domWrapperWinner.classList.remove('show--poup');
+            this.domFooter.classList.remove('hide-pannel');
+            this.refreshGame(playerName);
+        },
+        resetGame: function (ev) {
+            var playerName = ev.currentTarget.dataset.refreshGamer;
 
+            ev.preventDefault();
+            _.map(this.players, function (player) {
+                player.resetPlayerGame();
+            });
+            this.refreshGame(playerName);
+        },
+        refreshGame: function (playerName) {
             this.matrix.clearGrid();
-            this.matrix.currentPlayerName = startPlayer.name;
+            this.matrix.currentPlayerName = playerName;
 
-            if (startPlayer.name === 'machine') {
+            if (playerName === 'machine') {
                 ticTacToeUtils.triggerPlayTurn('machine');
             }
         },
@@ -134,14 +150,13 @@
         },
         showWinnerGame: function (evPlay) {
             var data = evPlay.detail,
-                winnerPlayer = _.find(this.players, { name: data.playerName }),
-                looserPlayer = _.find(this.players, { name: winnerPlayer.opponent });
+                winnerPlayer = _.find(this.players, { name: data.playerName });
 
             winnerPlayer.countWinner++;
-            _.delay(function () {
-                w.alert(winnerPlayer.shoutOfVictory); // TODO : popup victory
-                this.resetGame(looserPlayer); // TODO : onclick reset game
-            }.bind(this), 50);
+            this.domWrapperWinner.querySelector('.shout-text').innerText = winnerPlayer.shoutOfVictory;
+            this.domWrapperWinner.querySelector('.ia-refresh-game').dataset.refreshGamer = winnerPlayer.opponent;
+            this.domFooter.classList.add('hide-pannel');
+            this.domWrapperWinner.classList.add('show--poup');
         },
         getMoveTocompleteLine: function (player, oponent) {
             return checkManager.getMoveTocompleteLine(player, this.matrix) ||
@@ -225,14 +240,20 @@
             if (this.formConfigGame.checkValidity()) {
                 domForm.classList.add('hide-pannel');
                 this.domWrapperGame.classList.remove('hide-pannel');
-                _.map(d.querySelectorAll('[data-toggle-info-element]'), function (link) {
-                    link.dataset.toggleInfoElement = 'ia-matrix-wrapper';
-                });
+                ticTacToeUtils.toogleInfoViewsByData('toggle-info-element', 'ia-matrix-wrapper');
+                this.domFooter.querySelector('.ia-reset-game-wrapper').classList.remove('hide-pannel');
+                this.domFooter.querySelector('.ia-refresh-game').dataset.refreshGamer = starterPlayer.name;
                 this.initGameAssets(selectedConfig);
-                this.resetGame(starterPlayer);
+                this.refreshGame(starterPlayer.name);
             }
         },
         initGameDomElements: function () {
+            ticTacToeUtils.toogleInfoViewsByData('toggle-info-element', 'config-game-actions');
+            _.map(this.domActionRefreshGame, function (elReFresh) {
+                var action = elReFresh.dataset.refreshAction;
+
+                elReFresh.addEventListener('click', _.bind(w.IAGame[action], w.IAGame), false);
+            });
             // initalize informative pannels
             _.map(this.domLinksRules, function (link) {
                 link.addEventListener('click', _.bind(function (evClick) {
@@ -244,12 +265,12 @@
                     if (toggleAction === 'open') {
                         toggleEl.classList.add('hide-pannel');
                         this.domFooter.classList.add('hide-pannel');
-                        this.domWrapperRules.classList.add('show--rules');
+                        this.domWrapperRules.classList.add('show--poup');
 
                     } else if (toggleAction === 'close') {
                         toggleEl.classList.remove('hide-pannel');
                         this.domFooter.classList.remove('hide-pannel');
-                        this.domWrapperRules.classList.remove('show--rules');
+                        this.domWrapperRules.classList.remove('show--poup');
                     }
                 }, this), false);
             }, this);

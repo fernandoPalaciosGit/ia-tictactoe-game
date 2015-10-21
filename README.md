@@ -9,10 +9,6 @@
 
 - Mensaje de Fin de Partida y Reinicio
 
-- Boton Dinamico de Twitter
-
-- Maquillaje del Juego
-
 
 ### Deploy juego
 - :fork_and_knife: Forkeame en Github :smile:
@@ -53,3 +49,6 @@ $grunt default
 *			*			*			*
 ************************************/
 ```
+
+
+![Tic tae toe IA game](http://cruzalosdedos.es/media/tic-tae-toe-screenshot-game.png "NodeJS worker")
