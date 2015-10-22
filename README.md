@@ -51,4 +51,4 @@ $grunt default
 ```
 
 
-![Tic tae toe IA game](http://cruzalosdedos.es/media/tic-tae-toe-screenshot-game.png "Androis Tic Tae Toe Game")
+![Tic tae toe IA game](http://cruzalosdedos.es/media/tic-tae-toe-mobile-game.png "Androis Tic Tae Toe Game")
