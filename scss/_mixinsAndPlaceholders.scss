@@ -49,3 +49,36 @@
     border-width: 0;
     border-image: url('../images/border-winner-cell.png') 6% repeat;
 }
+
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+    @-ms-keyframes #{$name} {
+        @content;
+    }
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+@include keyframes(animation-background-lite) {
+    0% {
+        background-color: $primary-bgd-color;
+    }
+    40% {
+        background-color: $primary-soft-bgd-color;
+    }
+    50% {
+        background-color: $accent-dark-bgd-color;
+    }
+    70% {
+        background-color: $primary-soft-bgd-color;
+    }
+    100% {
+        background-color: $primary-bgd-color;
+    }
+}

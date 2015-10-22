@@ -35,7 +35,8 @@
             ev.preventDefault();
             _.map(this.players, function (player) {
                 player.resetPlayerGame();
-            });
+                this.domBadgeds.querySelector('[data-gamer-name=' + player.name + ']').dataset.badge = player.countWinner;
+            }, this);
             this.refreshGame(playerName);
         },
         refreshGame: function (playerName) {
@@ -156,7 +157,7 @@
                 winnerPlayer = _.find(this.players, { name: playerName });
 
             winnerPlayer.countWinner++;
-            this.domBadgeds.querySelector('[data-gamer-name=' + playerName +']').dataset.badge = winnerPlayer.countWinner;
+            this.domBadgeds.querySelector('[data-gamer-name=' + playerName + ']').dataset.badge = winnerPlayer.countWinner;
             this.domWrapperWinner.querySelector('.shout-text').innerText = winnerPlayer.shoutOfVictory;
             this.domWrapperWinner.querySelector('.ia-refresh-game').dataset.refreshGamer = winnerPlayer.opponent;
             this.domWrapperGame.classList.add('waiting-game--fadein');
@@ -224,9 +225,9 @@
             machine.setMove(this.getRandomNextTurn);
 
             // initialize game interaction
-            _.map(d.getElementsByClassName(this.matrix.cellClass), _.bind(function (cell) {
+            _.map(d.getElementsByClassName(this.matrix.cellClass), function (cell) {
                 cell.addEventListener('click', _.bind(ticTacToeUtils.triggerPlayTurn, this, 'human'), false);
-            }, this));
+            }, this);
         },
         initGameSettings: function (ev) {
             var domForm = this.formConfigGame,
