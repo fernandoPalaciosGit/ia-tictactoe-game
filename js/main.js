@@ -15,6 +15,7 @@
         domWrapperWinner: d.querySelector('.ia-winner-card'),
         domActionRefreshGame: d.querySelectorAll('.ia-refresh-game'),
         domFooter: d.querySelector('.ia-main-footer'),
+        domBadgeds: d.querySelector('.ia-gamer-badges'),
         formConfigGame: d.getElementById('config-game-actions'),
         continueGame: function (ev) {
             var playerName = ev.currentTarget.dataset.refreshGamer;
@@ -25,6 +26,7 @@
             });
             this.domWrapperWinner.classList.remove('show--poup');
             this.domFooter.classList.remove('hide-pannel');
+            this.domWrapperGame.classList.remove('waiting-game--fadein');
             this.refreshGame(playerName);
         },
         resetGame: function (ev) {
@@ -150,11 +152,14 @@
         },
         showWinnerGame: function (evPlay) {
             var data = evPlay.detail,
-                winnerPlayer = _.find(this.players, { name: data.playerName });
+                playerName = data.playerName,
+                winnerPlayer = _.find(this.players, { name: playerName });
 
             winnerPlayer.countWinner++;
+            this.domBadgeds.querySelector('[data-gamer-name=' + playerName +']').dataset.badge = winnerPlayer.countWinner;
             this.domWrapperWinner.querySelector('.shout-text').innerText = winnerPlayer.shoutOfVictory;
             this.domWrapperWinner.querySelector('.ia-refresh-game').dataset.refreshGamer = winnerPlayer.opponent;
+            this.domWrapperGame.classList.add('waiting-game--fadein');
             this.domFooter.classList.add('hide-pannel');
             this.domWrapperWinner.classList.add('show--poup');
         },
@@ -243,6 +248,7 @@
                 ticTacToeUtils.toogleInfoViewsByData('toggle-info-element', 'ia-matrix-wrapper');
                 this.domFooter.querySelector('.ia-reset-game-wrapper').classList.remove('hide-pannel');
                 this.domFooter.querySelector('.ia-refresh-game').dataset.refreshGamer = starterPlayer.name;
+                this.domBadgeds.classList.remove('hide-pannel');
                 this.initGameAssets(selectedConfig);
                 this.refreshGame(starterPlayer.name);
             }
@@ -264,11 +270,13 @@
 
                     if (toggleAction === 'open') {
                         toggleEl.classList.add('hide-pannel');
+                        this.domBadgeds.classList.add('hide-pannel');
                         this.domFooter.classList.add('hide-pannel');
                         this.domWrapperRules.classList.add('show--poup');
 
                     } else if (toggleAction === 'close') {
                         toggleEl.classList.remove('hide-pannel');
+                        this.domBadgeds.classList.remove('hide-pannel');
                         this.domFooter.classList.remove('hide-pannel');
                         this.domWrapperRules.classList.remove('show--poup');
                     }
