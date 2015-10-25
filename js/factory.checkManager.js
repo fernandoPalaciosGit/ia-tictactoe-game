@@ -95,6 +95,24 @@ window.CheckMatrixManager = ( function () {
             matrix.setWinnerCellHits('diagonal', diagonal === 1 ? 1 : 2, hits);
             return hits;
         },
+        countHitsDiagonalByCell = function (cell, player, matrix) {
+            var matchDiagonal = 0;
+
+            _.every([1, -1], function (diagonal) {
+                var isDiagonal =
+                    _.isEqual([0, 1 - diagonal], cell) ||
+                    _.isEqual([1, 1], cell) ||
+                    _.isEqual([2, 1 + diagonal], cell);
+
+                if (isDiagonal) {
+                    matchDiagonal = diagonal;
+                }
+
+                return !isDiagonal;
+            });
+
+            return countHitsDiagonal(matchDiagonal, player, matrix);
+        },
 
         /**
          * there is 2 turns from player in row/column AND
@@ -178,7 +196,8 @@ window.CheckMatrixManager = ( function () {
             var moveToDiscart = null;
 
             _.every(_.range(matrix.rows), function (row) {
-                if (countHitsRow(row, player, matrix) === 1) {
+                if (countHitsRow(row, player, matrix) === 1 &&
+                    countHitsColumn(row, player, matrix) !== 2) {
                     moveToDiscart = getFirstCellLineFilled(matrix, player, null, row);
                 }
 
@@ -187,7 +206,8 @@ window.CheckMatrixManager = ( function () {
 
             if (_.isNull(moveToDiscart)) {
                 _.every(_.range(matrix.columns), function (column) {
-                    if (countHitsColumn(column, player, matrix) === 1) {
+                    if (countHitsColumn(column, player, matrix) === 1 &&
+                        countHitsRow(column, player, matrix) !== 2 ) {
                         moveToDiscart = getFirstCellLineFilled(matrix, player, column, null);
                     }
 
@@ -203,6 +223,10 @@ window.CheckMatrixManager = ( function () {
 
                     return _.isNull(moveToDiscart);
                 });
+            }
+
+            if (!_.isNull(moveToDiscart)) {
+                moveToDiscart = countHitsDiagonalByCell(moveToDiscart, player, matrix) !== 2 ? moveToDiscart : null;
             }
 
             return moveToDiscart;

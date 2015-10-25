@@ -68,12 +68,14 @@
             var isNeedToPlay = !_.isUndefined(player) && player.countTurn < 3,
                 isLegalMove = this.matrix.isEmptyTurn.apply(this.matrix, move) && !_.isEqual(move, player.lastMove),
                 isMoveToCompleteMachine = false,
+                isStrategyMachine = isNeedToPlay && player.name === 'machine',
                 moveToComplete = [],
-                oponent = _.find(this.players, { name: player.opponent });
+                opponent = _.find(this.players, { name: player.opponent });
 
             // IA machine : check best oportunity for win
-            if (player.name === 'machine' && player.countTurn > 1) {
-                moveToComplete = this.getMoveTocompleteLine(player, oponent);
+            if (isStrategyMachine) {
+                moveToComplete = checkManager.getMoveTocompleteLine(player, this.matrix) ||
+                        checkManager.getMoveTocompleteLine(opponent, this.matrix);
                 isMoveToCompleteMachine = _.isArray(moveToComplete) && !_.isEqual(moveToComplete, player.lastMove);
 
                 // change value of movement (reference) when is priority complete line
@@ -89,17 +91,23 @@
         isNeedDiscartTurn: function (move, player) {
             var opponent = _.find(this.players, { name: player.opponent }),
                 isNeedToDiscart = !_.isUndefined(player) && player.countTurn === 3,
-                isLegalMove = this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status &&
+                isLegalMove =
+                    this.matrix.getStatusGrid.apply(this.matrix, move) === player.matrix.status &&
                     (!checkManager.isCellUnBlockLine(move, opponent, this.matrix) ||
                     checkManager.isCheckedlineToComplete(move, opponent, this.matrix, 1)),
+                isStrategyMachine =
+                    isNeedToDiscart &&
+                    player.name === 'machine' &&
+                    _.isArray(checkManager.getMoveTocompleteLine(opponent, this.matrix)),
                 moveTodiscart = [],
                 isMoveToDiscartMachine = false;
 
             // for the case where priority is not complete line, the random motion is checked
-            if (player.name === 'machine' && _.isArray(this.getMoveTocompleteLine(player))) {
+            if (isStrategyMachine) {
                 moveTodiscart = checkManager.getMoveTodiscartLine(player, this.matrix);
-                isMoveToDiscartMachine = _.isArray(moveTodiscart) &&
-                        this.matrix.getStatusGrid.apply(this.matrix, moveTodiscart) === player.matrix.status;
+                isMoveToDiscartMachine =
+                    _.isArray(moveTodiscart) &&
+                    this.matrix.getStatusGrid.apply(this.matrix, moveTodiscart) === player.matrix.status;
 
                 // change value of movement (reference) when is priority complete line
                 if (isMoveToDiscartMachine) {
@@ -108,7 +116,6 @@
                 }
             }
 
-            console.log(move); // todo : BUG
             return isNeedToDiscart && (isMoveToDiscartMachine || isLegalMove);
         },
         setBoardOnAviableTurn: function (move, player) {
@@ -184,10 +191,6 @@
             this.domWrapperGame.classList.add('waiting-game--fadein');
             this.domFooter.classList.add('hide-pannel');
             this.domWrapperWinner.classList.add('show--poup');
-        },
-        getMoveTocompleteLine: function (player, oponent) {
-            return (!_.isUndefined(player) ? checkManager.getMoveTocompleteLine(player, this.matrix) : true) ||
-                (!_.isUndefined(oponent) ? checkManager.getMoveTocompleteLine(oponent, this.matrix) : true) || null;
         },
         play: function (evPlay) {
             var data = evPlay.detail,
