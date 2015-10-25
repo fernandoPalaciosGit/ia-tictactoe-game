@@ -21,11 +21,11 @@ body, html {
 
 .mdl-mini-footer.ia-main-footer {
     bottom: 0;
+    padding: 20px 0;
     position: fixed;
     width: 100%;
     z-index: $above-z-index;
     align-items: center;
-    padding: 20px 0;
 
     .mdl-logo {
         line-height: 1;
@@ -38,6 +38,20 @@ body, html {
 
     .mdl-mini-footer__right-section{
         padding-right: $matrix-game-footer-pagging-hztl;
+    }
+}
+
+#twitter-share-button {
+    margin-right: -100%;
+    margin-top: -132px;
+    position: fixed;
+    right: 100%;
+    top: 100%;
+    transform: translateX(-10px);
+
+    @media screen and (min-width: $media-medium-width) {
+        position: static;
+        margin: 0 auto;
     }
 }
 
@@ -137,9 +151,9 @@ body, html {
 .ia-winner-card,
 .ia-rules-card {
     opacity: 0;
+    position: absolute;
+    top: 0; // hide outside html flow
     visibility: hidden;
-    position: absolute; // hide outside html flow
-    top: 0;
     z-index: $above-z-index;
 
     &.show--poup {
@@ -176,10 +190,10 @@ body, html {
     }
 
     &.mdl-card {
-        width: 90%;
         background: url('../images/board-circle-cross.jpg') no-repeat center center;
         background-size: contain;
         height: $matrix-game-rules-height;
+        width: 90%;
 
         @media screen and (min-width: $media-medium-width) {
             background-size: cover;
@@ -229,10 +243,10 @@ body, html {
     $size-card: 260px;
     &.mdl-card {
         background: $primary-dark-bgd-color;
-        margin-top: -220px;
-        top: 100%;
         left: 50%;
         margin-left: - ($size-card / 2);
+        margin-top: -220px;
+        top: 100%;
         width: $size-card;
     }
 
@@ -244,13 +258,13 @@ body, html {
     }
 
     .mdl-card__title {
-        align-items: flex-start;
         animation: animation-background-lite 2s infinite;
+        align-items: flex-start;
     }
 
     .mdl-card__title > h4 {
-        margin-top: 0;
         background-color: inherit;
+        margin-top: 0;
     }
 
     .mdl-button {
@@ -266,10 +280,10 @@ body, html {
 
 
 .ia-gamer-badges {
-    position: fixed;
-    top: 100%;
     margin-top: -140px;
+    position: fixed;
     text-align: center;
+    top: 100%;
     width: 100%;
 
     .snippet-demo {
@@ -293,6 +307,7 @@ body, html {
         top: 50%;
         margin-top: -90px;
         width: auto;
+        margin-left: 10px;
 
         .snippet-demo {
             display: block;

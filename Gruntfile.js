@@ -2,7 +2,7 @@ module.exports = function (grunt) {
     'use strict';
 
     var timeGrunt = require('time-grunt'),
-        targetJS = ['js/**/*.js', 'Gruntfile.js'];
+        targetJS = ['js/**/*.js', 'Gruntfile.js', '!js/vendors/**/*.js'];
 
     // loading apckages
     timeGrunt(grunt);

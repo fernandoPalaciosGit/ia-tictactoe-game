@@ -1,5 +1,5 @@
-// jshint maxparams: 6
-(function (w, d, ticTacToeUtils, Matrix, Player, checkManager) {
+// jshint maxparams: 7
+(function (w, d, ticTacToeUtils, Matrix, Player, checkManager, twttr) {
     'use strict';
 
     w.IAGame = {
@@ -16,6 +16,7 @@
         domActionRefreshGame: d.querySelectorAll('.ia-refresh-game'),
         domFooter: d.querySelector('.ia-main-footer'),
         domBadgeds: d.querySelector('.ia-gamer-badges'),
+        domTwitterBtn: d.querySelector('#twitter-share-button'),
         formConfigGame: d.getElementById('config-game-actions'),
         continueGame: function (ev) {
             var playerName = ev.currentTarget.dataset.refreshGamer;
@@ -263,6 +264,7 @@
                 domForm.classList.add('hide-pannel');
                 this.domWrapperGame.classList.remove('hide-pannel');
                 this.domBadgeds.classList.remove('hide-pannel');
+                this.domTwitterBtn.classList.remove('hide-pannel');
                 ticTacToeUtils.toogleInfoViewsByData('toggle-info-element', 'ia-matrix-wrapper');
                 this.domFooter.querySelector('.ia-reset-game-wrapper').classList.remove('hide-pannel');
                 this.domFooter.querySelector('.ia-refresh-game').dataset.refreshGamer = starterPlayer.name;
@@ -303,6 +305,22 @@
             this.domWaitingMachine.addEventListener('mdl-componentupgraded', function () {
                 this.MaterialProgress.setProgress(45);
             });
+
+            twttr.ready(function (twttr) {
+                twttr.widgets.createShareButton(
+                    'http://www.cruzalosdedos.es/tictactoe',
+                    document.getElementById('twitter-share-button'),
+                    {
+                        size: 'large',
+                        via: 'nandopalandi',
+                        related: 'twitterapi,twitter',
+                        text: 'Play Tic tae toe game with machine',
+                        hashtags: 'games,html5',
+                        count: 'none'
+                    }
+                );
+            });
+
         },
         init: function () {
             this.initGameDomElements();
@@ -319,4 +337,4 @@
     };
 
     d.addEventListener('DOMContentLoaded', _.bind(w.IAGame.init, w.IAGame), false);
-}(window, document, window.TicTacToeUtils, window.Matrix, window.Player, window.CheckMatrixManager));
+}(window, document, window.TicTacToeUtils, window.Matrix, window.Player, window.CheckMatrixManager, window.twttr));
