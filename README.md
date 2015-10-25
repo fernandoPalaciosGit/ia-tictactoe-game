@@ -1,13 +1,13 @@
 ### Juego de 3 en ralla con inteligencia artificial
-- Control de Turno y Movimientos
+- Shift Control and Motion
 
-- Reconocimiento de Victoria
+- Recognition of VIctory
 
-- Reconocimiento de Movimiento Bloqueado
+- Recognition of blocked movement
 
-- Inteligencia Artificial en Movimiento de la Maquina
+- Artificial intelligence machine movement
 
-- Mensaje de Fin de Partida y Reinicio
+- Game Messages
 
 
 ### Deploy juego
@@ -51,4 +51,4 @@ $grunt default
 ```
 
 
-![Tic tae toe IA game](http://cruzalosdedos.es/media/tic-tae-toe-screenshot-game.png "NodeJS worker")
+![Tic tae toe IA game](http://cruzalosdedos.es/media/tic-tae-toe-mobile-game.png "Androis Tic Tae Toe Game")
