@@ -262,6 +262,7 @@
             if (this.formConfigGame.checkValidity()) {
                 domForm.classList.add('hide-pannel');
                 this.domWrapperGame.classList.remove('hide-pannel');
+                this.domBadgeds.classList.remove('hide-pannel');
                 ticTacToeUtils.toogleInfoViewsByData('toggle-info-element', 'ia-matrix-wrapper');
                 this.domFooter.querySelector('.ia-reset-game-wrapper').classList.remove('hide-pannel');
                 this.domFooter.querySelector('.ia-refresh-game').dataset.refreshGamer = starterPlayer.name;
@@ -287,13 +288,11 @@
 
                     if (toggleAction === 'open') {
                         toggleEl.classList.add('hide-pannel');
-                        this.domBadgeds.classList.add('hide-pannel');
                         this.domFooter.classList.add('hide-pannel');
                         this.domWrapperRules.classList.add('show--poup');
 
                     } else if (toggleAction === 'close') {
                         toggleEl.classList.remove('hide-pannel');
-                        this.domBadgeds.classList.remove('hide-pannel');
                         this.domFooter.classList.remove('hide-pannel');
                         this.domWrapperRules.classList.remove('show--poup');
                     }

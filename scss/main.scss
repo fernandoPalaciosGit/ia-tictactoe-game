@@ -142,10 +142,14 @@ body, html {
     top: 0;
     z-index: $above-z-index;
 
-    &.show--poup{
+    &.show--poup {
         @extend %transition-smooth;
         opacity: 1;
         visibility: visible;
+    }
+
+    &.show--poup + .ia-gamer-badges {
+        display: none;
     }
 }
 
@@ -241,12 +245,16 @@ body, html {
 
     .mdl-card__title {
         align-items: flex-start;
-        animation: animation-background-lite 5s infinite;
+        animation: animation-background-lite 2s infinite;
     }
 
     .mdl-card__title > h4 {
         margin-top: 0;
         background-color: inherit;
+    }
+
+    .mdl-button {
+        width: 100%;
     }
 
     .mdl-card__title,
